@@ -1,29 +1,50 @@
 const models = require('./models');
+const jwt = require('jsonwebtoken');
 
 module.exports = {
   signIn: async (req, res) => {
     try {
-      const email = 'test@test.com';
-      // req.body에서 이메일, 패스워드 꺼냄
-      // 이메일로 유저 찾기
-      // 비밀번호가 찾은 비밀번호와 다르다면 에러 (400)
-      // 유저 없어도 에러 (404)
-      // 200일 경우 jwt 토큰 발급
-      const users = await models.users.get(email);
-      console.log(users);
-      res.status(200).send('로그인');
+      const { body } = req;
+      const { email, password } = body;
+      const user = await models.users.get({ email, password });
+      if (user[0] && user[0].password === password) {
+        const { email, name } = user[0];
+        const token = jwt.sign({ email, name }, process.env.JWT_SECRET, {
+          expiresIn: '1h',
+        });
+        res.status(200).send({ message: '로그인 성공', token });
+      } else {
+        res.status(401).send('이메일 또는 비밀번호가 잘못되었습니다');
+      }
     } catch (error) {
       console.log(error);
+      res.status(500).send('서버 에러');
     }
   },
   signUp: async (req, res) => {
     try {
-      const [email, password] = ['1@1.com', '1234'];
-      // 이미 가입된 이메일
-      await models.users.post({ email, password });
-      res.status(200).send('가입');
+      const { body } = req;
+      const { name, email, password } = body;
+      await models.users.post({ name, email, password });
+      res.status(200).send('회원가입 성공');
     } catch (error) {
       console.log(error);
+      res.status(500).send('서버 에러');
+    }
+  },
+  checkIsEmailExist: async (req, res) => {
+    try {
+      const { body } = req;
+      const { email } = body;
+      const user = await models.users.get({ email });
+      if (user[0]) {
+        res.status(200).send('사용 가능한 이메일');
+      } else {
+        res.status(401).send('이미 존재하는 이메일');
+      }
+    } catch (error) {
+      console.log(error);
+      res.status(500).send('서버 에러');
     }
   },
   signOut: async () => {

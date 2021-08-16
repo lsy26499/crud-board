@@ -2,28 +2,39 @@ const db = require('./db');
 
 module.exports = {
   users: {
-    get: async (data) => {
-      const { email } = data;
-      try {
-        const pool = await db.getConnection();
-        const users = await pool.query(
-          `SELECT * FROM test WHERE email = '${email}'`
-        );
-        return users;
-      } catch (error) {
-        console.log(error);
-      }
+    get: function (body) {
+      return new Promise((res, rej) => {
+        db.getConnection()
+          .then((conn) => {
+            conn
+              .query(`SELECT * FROM test WHERE email = '${body.email}'`)
+              .then((rows) => {
+                res(rows);
+              });
+            conn.release();
+          })
+          .catch((err) => {
+            rej(err);
+          });
+      });
     },
-    post: async (data) => {
-      const { email, password } = data;
-      try {
-        const pool = await db.getConnection();
-        await pool.query(
-          `INSERT INTO test(email, password) VALUES ('${email}', '${password}')`
-        );
-      } catch (error) {
-        console.log(error);
-      }
+    post: function (body) {
+      return new Promise((res, rej) => {
+        db.getConnection()
+          .then((conn) => {
+            conn
+              .query(
+                `INSERT INTO test(name, email, password) VALUES ('${body.name}', '${body.email}', '${body.password}')`
+              )
+              .then((rows) => {
+                res(rows);
+              });
+            conn.release();
+          })
+          .catch((err) => {
+            rej(err);
+          });
+      });
     },
   },
 };
