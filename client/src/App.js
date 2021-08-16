@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { Home, SignIn, SignUp } from './pages';
+import './index.scss';
 
 const App = () => {
   return (

@@ -1,13 +1,20 @@
 import { useState } from 'react';
 import { Header } from '../../compoentns';
+import { actions } from '../../modules/store';
+import { useDispatch } from 'react-redux';
 
 const SignIn = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const dispatch = useDispatch();
 
   const onSubmit = (e) => {
     e.preventDefault();
-    //! api call
+    if (email === '' || password === '') {
+      alert('이메일과 비밀번호를 입력해주세요');
+      return;
+    }
+    dispatch(actions.signIn({ email, password }));
   };
 
   const onChangeEmail = (e) => {

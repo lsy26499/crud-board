@@ -9,10 +9,13 @@ module.exports = {
       const user = await models.users.get({ email, password });
       if (user[0] && user[0].password === password) {
         const { email, name } = user[0];
-        const token = jwt.sign({ email, name }, process.env.JWT_SECRET, {
+        const accessToken = jwt.sign({ email, name }, process.env.JWT_SECRET, {
           expiresIn: '1h',
         });
-        res.status(200).send({ message: '로그인 성공', token });
+        const tokenType = 'Bearer';
+        res
+          .status(200)
+          .send({ message: '로그인 성공', accessToken, tokenType });
       } else {
         res.status(401).send('이메일 또는 비밀번호가 잘못되었습니다');
       }
