@@ -2,7 +2,7 @@ const db = require('./db');
 
 module.exports = {
   users: {
-    get: function (body) {
+    findByEmail: function (body) {
       return new Promise((res, rej) => {
         db.getConnection()
           .then((conn) => {
@@ -18,7 +18,23 @@ module.exports = {
           });
       });
     },
-    post: function (body) {
+    findByName: function (body) {
+      return new Promise((res, rej) => {
+        db.getConnection()
+          .then((conn) => {
+            conn
+              .query(`SELECT * FROM test WHERE name = '${body.name}'`)
+              .then((rows) => {
+                res(rows);
+              });
+            conn.release();
+          })
+          .catch((err) => {
+            rej(err);
+          });
+      });
+    },
+    insert: function (body) {
       return new Promise((res, rej) => {
         db.getConnection()
           .then((conn) => {

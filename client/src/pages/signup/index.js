@@ -1,6 +1,7 @@
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { actions } from '../../modules/store';
 import { Header } from '../../compoentns';
-import { validateEmail } from '../../utils';
 
 const SignUp = () => {
   const [values, setValues] = useState({
@@ -9,24 +10,18 @@ const SignUp = () => {
     password: '',
     secondPassword: '',
   });
-  const [emailError, setEmailError] = useState(false);
+  const dispatch = useDispatch();
 
   const onClickCheckEmailButton = () => {
-    //! api call
+    if (values.email === '') {
+      return;
+    }
+    dispatch(actions.checkIsEmailExist({ email: values.email }));
   };
 
   const onChangeInputValues = (e) => {
     const value = e.target.value;
     const name = e.target.name;
-    if (name === 'email') {
-      if (!validateEmail(value)) {
-        setEmailError('잘못된 이메일 형식입니다');
-      }
-      if (value === '') {
-        setEmailError(false);
-      }
-    }
-
     setValues({ ...values, [name]: value });
   };
 
@@ -47,7 +42,7 @@ const SignUp = () => {
       return;
     }
 
-    //! api call
+    dispatch(actions.signUp({ name, email, password }));
   };
 
   return (
@@ -57,9 +52,10 @@ const SignUp = () => {
         <h1>회원가입</h1>
         <form onSubmit={onSubmit}>
           <input
-            placeholder='이름'
+            placeholder='아이디'
             type='name'
             name='name'
+            value={values.name}
             onChange={onChangeInputValues}
           ></input>
           <div>
@@ -67,21 +63,23 @@ const SignUp = () => {
               placeholder='이메일'
               type='email'
               name='email'
+              value={values.email}
               onChange={onChangeInputValues}
             ></input>
             <div onClick={onClickCheckEmailButton}>중복확인</div>
-            <span>{emailError}</span>
           </div>
           <input
             placeholder='비밀번호'
             type='password'
             name='password'
+            value={values.password}
             onChange={onChangeInputValues}
           ></input>
           <input
             placeholder='비밀번호 확인'
-            type='secondPassword'
+            type='password'
             name='secondPassword'
+            value={values.secondPassword}
             onChange={onChangeInputValues}
           ></input>
           <button type='submit'>회원가입</button>

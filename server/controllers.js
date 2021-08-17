@@ -5,8 +5,8 @@ module.exports = {
   signIn: async (req, res) => {
     try {
       const { body } = req;
-      const { email, password } = body;
-      const user = await models.users.get({ email, password });
+      const { name, password } = body;
+      const user = await models.users.findByName({ name });
       if (user[0] && user[0].password === password) {
         const { email, name } = user[0];
         const accessToken = jwt.sign({ email, name }, process.env.JWT_SECRET, {
@@ -17,7 +17,7 @@ module.exports = {
           .status(200)
           .send({ message: '로그인 성공', accessToken, tokenType });
       } else {
-        res.status(401).send('이메일 또는 비밀번호가 잘못되었습니다');
+        res.status(400).send('이메일 또는 비밀번호가 잘못되었습니다');
       }
     } catch (error) {
       console.log(error);
@@ -28,7 +28,12 @@ module.exports = {
     try {
       const { body } = req;
       const { name, email, password } = body;
-      await models.users.post({ name, email, password });
+      const user = await models.users.findByName({ name });
+      if (user[0]) {
+        res.status(400).send('이미 가입된 유저');
+        return;
+      }
+      await models.users.insert({ name, email, password });
       res.status(200).send('회원가입 성공');
     } catch (error) {
       console.log(error);
@@ -37,13 +42,17 @@ module.exports = {
   },
   checkIsEmailExist: async (req, res) => {
     try {
-      const { body } = req;
-      const { email } = body;
-      const user = await models.users.get({ email });
-      if (user[0]) {
-        res.status(200).send('사용 가능한 이메일');
+      const { query } = req;
+      const { email } = query;
+      const user = await models.users.findByEmail({ email });
+      if (!user[0]) {
+        res
+          .status(200)
+          .send({ message: '사용 가능한 이메일', isEmailExist: false });
       } else {
-        res.status(401).send('이미 존재하는 이메일');
+        res
+          .status(200)
+          .send({ message: '이미 존재하는 이메일', isEmailExist: true });
       }
     } catch (error) {
       console.log(error);

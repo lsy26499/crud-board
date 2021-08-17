@@ -15,6 +15,7 @@ export const authSlice = createSlice({
       state.tokenType = tokenType;
     },
     signUp: (state, action) => {},
+    checkIsEmailExist: (state, action) => {},
   },
 });
 
