@@ -7,6 +7,5 @@ router.post('/signin', controllers.signIn);
 router.post('/signup', controllers.signUp);
 router.get('/check-userId', controllers.checkIsIdExist);
 router.get('/check-email', controllers.checkIsEmailExist);
-router.post('/signout', controllers.signOut);
 
 module.exports = router;

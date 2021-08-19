@@ -8,7 +8,7 @@ export const axios = axiosModule.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  // withCredentials: true,
+  withCredentials: true,
   timeout: 60 * 5,
 });
 
