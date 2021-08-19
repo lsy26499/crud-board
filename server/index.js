@@ -11,8 +11,6 @@ const app = express();
 
 dotenv.config();
 
-const clientOrigin = process.env.LOCAL_CLIENT_URL;
-
 app.use(helmet());
 app.use(cookieParser());
 app.use(express.json());
@@ -20,7 +18,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 app.use(
   cors({
-    origin: [clientOrigin],
+    origin: [process.env.LOCAL_CLIENT_URL, process.env.PROD_CLIENT_URL],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
   })
