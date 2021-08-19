@@ -9,7 +9,7 @@ export const axios = axiosModule.create({
     'Content-Type': 'application/json',
   },
   withCredentials: true,
-  timeout: 60 * 5,
+  timeout: 6000 * 50000,
 });
 
 axios.interceptors.request.use((request) => {

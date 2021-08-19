@@ -23,6 +23,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "start:prod": "REACT_APP_MODE=prod react-scripts start",
     "build": "react-scripts build",
     "build:prod": "REACT_APP_MODE=prod react-scripts build",
     "test": "react-scripts test",
