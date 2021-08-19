@@ -13,9 +13,14 @@ export const authSlice = createSlice({
       const { accessToken, tokenType } = payload;
       state.accessToken = accessToken;
       state.tokenType = tokenType;
+      state.isLoggedIn = true;
     },
     signUp: (state, action) => {},
-    checkIsEmailExist: (state, action) => {},
+    signOut: (state, action) => {
+      state.accessToken = null;
+      state.tokenType = null;
+      state.isLoggedIn = false;
+    },
   },
 });
 

@@ -5,19 +5,12 @@ import { Header } from '../../compoentns';
 
 const SignUp = () => {
   const [values, setValues] = useState({
-    name: '',
+    userId: '',
     email: '',
     password: '',
     secondPassword: '',
   });
   const dispatch = useDispatch();
-
-  const onClickCheckEmailButton = () => {
-    if (values.email === '') {
-      return;
-    }
-    dispatch(actions.checkIsEmailExist({ email: values.email }));
-  };
 
   const onChangeInputValues = (e) => {
     const value = e.target.value;
@@ -27,7 +20,7 @@ const SignUp = () => {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    const { name, email, password, secondPassword } = values;
+    const { userId, email, password, secondPassword } = values;
     const isInputEmpty = Boolean(
       Object.values(values).filter((item) => item === '').length
     );
@@ -41,8 +34,7 @@ const SignUp = () => {
       alert('비밀번호가 일치하지 않습니다');
       return;
     }
-
-    dispatch(actions.signUp({ name, email, password }));
+    dispatch(actions.signUp({ userId, email, password }));
   };
 
   return (
@@ -53,21 +45,17 @@ const SignUp = () => {
         <form onSubmit={onSubmit}>
           <input
             placeholder='아이디'
-            type='name'
-            name='name'
-            value={values.name}
+            name='userId'
+            value={values.userId}
             onChange={onChangeInputValues}
           ></input>
-          <div>
-            <input
-              placeholder='이메일'
-              type='email'
-              name='email'
-              value={values.email}
-              onChange={onChangeInputValues}
-            ></input>
-            <div onClick={onClickCheckEmailButton}>중복확인</div>
-          </div>
+          <input
+            placeholder='이메일'
+            type='email'
+            name='email'
+            value={values.email}
+            onChange={onChangeInputValues}
+          ></input>
           <input
             placeholder='비밀번호'
             type='password'

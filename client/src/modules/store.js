@@ -3,7 +3,11 @@ import createSagaMiddleware from 'redux-saga';
 import { rootReducer, actionsModule, historyModule } from './slices';
 import rootSaga from './sagas';
 
-const sagaMiddleware = createSagaMiddleware();
+const sagaMiddleware = createSagaMiddleware({
+  context: {
+    history: historyModule,
+  },
+});
 
 export const store = configureStore({
   reducer: rootReducer,

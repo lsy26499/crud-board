@@ -1,13 +1,15 @@
 import { useHistory } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { actions } from '../../modules/store';
 import './index.scss';
 
 const Header = () => {
+  const dispatch = useDispatch();
   const history = useHistory();
-  const { accessToken } = useSelector((state) => state.auth);
+  const { isLoggedIn } = useSelector((state) => state.auth);
 
   const onClicSignOut = () => {
-    //! 리덕스 & 토큰 삭제
+    dispatch(actions.signOut());
     history.push('/');
   };
 
@@ -18,7 +20,7 @@ const Header = () => {
           홈
         </div>
         <ul className='auth-nav-section'>
-          {!accessToken ? (
+          {!isLoggedIn ? (
             <>
               <li className='nav-item' onClick={() => history.push('/sign-in')}>
                 로그인

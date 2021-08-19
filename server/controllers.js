@@ -5,13 +5,17 @@ module.exports = {
   signIn: async (req, res) => {
     try {
       const { body } = req;
-      const { name, password } = body;
-      const user = await models.users.findByName({ name });
+      const { userId, password } = body;
+      const user = await models.users.findByUserId({ userId });
       if (user[0] && user[0].password === password) {
-        const { email, name } = user[0];
-        const accessToken = jwt.sign({ email, name }, process.env.JWT_SECRET, {
-          expiresIn: '1h',
-        });
+        const { email, userId } = user[0];
+        const accessToken = jwt.sign(
+          { email, userId },
+          process.env.JWT_SECRET,
+          {
+            expiresIn: '1h',
+          }
+        );
         const tokenType = 'Bearer';
         res
           .status(200)
@@ -27,14 +31,38 @@ module.exports = {
   signUp: async (req, res) => {
     try {
       const { body } = req;
-      const { name, email, password } = body;
-      const user = await models.users.findByName({ name });
-      if (user[0]) {
+      const { userId, email, password } = body;
+      const userFoundById = await models.users.findByUserId({ userId });
+      const userFoundByEmail = await models.users.findByEmail({ email });
+      if (userFoundById[0]) {
         res.status(400).send('이미 가입된 유저');
         return;
       }
-      await models.users.insert({ name, email, password });
+      if (userFoundByEmail[0]) {
+        res.status(400).send('중복된 이메일');
+        return;
+      }
+      await models.users.insert({ userId, email, password });
       res.status(200).send('회원가입 성공');
+    } catch (error) {
+      console.log(error);
+      res.status(500).send('서버 에러');
+    }
+  },
+  checkIsIdExist: async (req, res) => {
+    try {
+      const { query } = req;
+      const { userId } = query;
+      const user = await models.users.findByEmail({ userId });
+      if (!user[0]) {
+        res
+          .status(200)
+          .send({ message: '사용 가능한 아이디', isEmailExist: false });
+      } else {
+        res
+          .status(200)
+          .send({ message: '이미 존재하는 아이디', isEmailExist: true });
+      }
     } catch (error) {
       console.log(error);
       res.status(500).send('서버 에러');

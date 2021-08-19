@@ -1,3 +1,7 @@
 export const initialState = {
-  auth: {},
+  auth: {
+    accessToken: null,
+    tokenType: null,
+    isLoggedIn: false,
+  },
 };

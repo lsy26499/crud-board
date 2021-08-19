@@ -4,22 +4,22 @@ import { actions } from '../../modules/store';
 import { useDispatch } from 'react-redux';
 
 const SignIn = () => {
-  const [name, setName] = useState('');
+  const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
   const dispatch = useDispatch();
 
   const onSubmit = (e) => {
     e.preventDefault();
-    if (name === '' || password === '') {
+    if (userId === '' || password === '') {
       alert('아이디와 비밀번호를 입력해주세요');
       return;
     }
-    dispatch(actions.signIn({ name, password }));
+    dispatch(actions.signIn({ userId, password }));
   };
 
-  const onChangeName = (e) => {
+  const onChangeUserId = (e) => {
     const value = e.target.value;
-    setName(value);
+    setUserId(value);
   };
 
   const onChangePassword = (e) => {
@@ -35,9 +35,9 @@ const SignIn = () => {
         <form onSubmit={onSubmit}>
           <input
             placeholder='아이디'
-            name='name'
-            value={name}
-            onChange={onChangeName}
+            name='userId'
+            value={userId}
+            onChange={onChangeUserId}
           ></input>
           <input
             placeholder='비밀번호'
