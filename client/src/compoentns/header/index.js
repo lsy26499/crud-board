@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { actions } from '../../modules/store';
@@ -12,6 +13,10 @@ const Header = () => {
     dispatch(actions.signOut());
     history.push('/');
   };
+
+  useEffect(() => {
+    dispatch(actions.removeFoundUserData());
+  }, [history.location]);
 
   return (
     <header className='header'>

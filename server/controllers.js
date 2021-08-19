@@ -55,7 +55,7 @@ module.exports = {
       const { email } = query;
       const [userId] = await models.users.findUserId({ email });
       if (userId) {
-        res.status(200).send({ userId });
+        res.status(200).send({ foundData: userId.userId });
       } else {
         res.status(404).send('존재하지 않는 유저');
       }
@@ -70,7 +70,7 @@ module.exports = {
       const { userId, email } = query;
       const [password] = await models.users.findPassword({ userId, email });
       if (password) {
-        res.status(200).send({ password });
+        res.status(200).send({ foundData: password.password });
       } else {
         res.status(404).send('존재하지 않는 유저');
       }

@@ -33,6 +33,38 @@ function* signUpRequest({ payload }) {
   }
 }
 
+function* findUserIdRequest({ payload }) {
+  try {
+    const { email } = payload;
+    const { data } = yield axios.get(`/find-id/?email=${email}`);
+    const { foundData } = data;
+    yield put(authActions.setFoundUserData({ foundData }));
+  } catch (error) {
+    console.log(error);
+    const {
+      response: { data },
+    } = error;
+    alert(data);
+  }
+}
+
+function* findPasswordRequest({ payload }) {
+  try {
+    const { userId, email } = payload;
+    const { data } = yield axios.get(
+      `/find-password/?email=${email}&userId=${userId}`
+    );
+    const { foundData } = data;
+    yield put(authActions.setFoundUserData({ foundData }));
+  } catch (error) {
+    console.log(error);
+    const {
+      response: { data },
+    } = error;
+    alert(data);
+  }
+}
+
 function* signOutRequest() {
   try {
     axios.defaults.headers['AccessToken'] = null;
@@ -52,11 +84,27 @@ function* signUpWatcher() {
   yield takeEvery(signUp, signUpRequest);
 }
 
+function* findUserIdWatcher() {
+  const { findUserId } = authActions;
+  yield takeEvery(findUserId, findUserIdRequest);
+}
+
+function* findPasswordWatcher() {
+  const { findPassword } = authActions;
+  yield takeEvery(findPassword, findPasswordRequest);
+}
+
 function* signOutWatcher() {
   const { signOut } = authActions;
   yield takeEvery(signOut, signOutRequest);
 }
 
 export default function* authSaga() {
-  yield all([fork(signInWatcher), fork(signUpWatcher), fork(signOutWatcher)]);
+  yield all([
+    fork(signInWatcher),
+    fork(signUpWatcher),
+    fork(findUserIdWatcher),
+    fork(findPasswordWatcher),
+    fork(signOutWatcher),
+  ]);
 }

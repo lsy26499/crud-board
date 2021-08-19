@@ -6,5 +6,6 @@ export const initialState = {
     accessToken: null,
     tokenType: null,
     isLoggedIn: false,
+    foundData: null,
   },
 };

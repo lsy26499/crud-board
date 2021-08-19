@@ -9,7 +9,6 @@ module.exports = {
             .query(`SELECT * FROM test WHERE email = '${data.email}'`)
             .then((rows) => {
               res(rows);
-              conn.end();
             });
         }).catch((err) => {
           rej(err);
@@ -23,7 +22,6 @@ module.exports = {
             .query(`SELECT * FROM test WHERE userId = '${data.userId}'`)
             .then((rows) => {
               res(rows);
-              conn.end();
             });
         }).catch((err) => {
           rej(err);
@@ -37,7 +35,6 @@ module.exports = {
             .query(`SELECT userId FROM test WHERE email = '${data.email}'`)
             .then((rows) => {
               res(rows);
-              conn.end();
             });
         }).catch((err) => {
           rej(err);
@@ -53,7 +50,6 @@ module.exports = {
             )
             .then((rows) => {
               res(rows);
-              conn.end();
             });
         }).catch((err) => {
           rej(err);
@@ -69,7 +65,6 @@ module.exports = {
             )
             .then((rows) => {
               res(rows);
-              conn.end();
             });
         }).catch((err) => {
           rej(err);

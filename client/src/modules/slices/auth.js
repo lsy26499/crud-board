@@ -16,6 +16,16 @@ export const authSlice = createSlice({
       state.isLoggedIn = true;
     },
     signUp: (state, action) => {},
+    findUserId: (state, action) => {},
+    findPassword: (state, action) => {},
+    setFoundUserData: (state, action) => {
+      const { payload } = action;
+      const { foundData } = payload;
+      state.foundData = foundData;
+    },
+    removeFoundUserData: (state, action) => {
+      state.foundData = null;
+    },
     signOut: (state, action) => {
       state.accessToken = null;
       state.tokenType = null;
