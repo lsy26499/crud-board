@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { Header } from '../../compoentns';
 import { actions } from '../../modules/store';
 import { useDispatch } from 'react-redux';
@@ -7,6 +8,7 @@ const SignIn = () => {
   const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -48,6 +50,12 @@ const SignIn = () => {
           ></input>
           <button type='submit'>로그인</button>
         </form>
+        <nav>
+          <div onClick={() => history.push('/find-id')}>아이디 찾기</div>
+          <div onClick={() => history.push('/find-password')}>
+            비밀번호 찾기
+          </div>
+        </nav>
       </main>
     </div>
   );
