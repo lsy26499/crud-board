@@ -5,7 +5,7 @@ module.exports = {
     return new Promise((res, rej) => {
       db.then((conn) => {
         conn
-          .query(`SELECT * FROM USER WHERE email = '${data.email}'`)
+          .query(`SELECT * FROM user WHERE email = '${data.email}'`)
           .then((rows) => {
             res(rows);
           });
@@ -18,7 +18,7 @@ module.exports = {
     return new Promise((res, rej) => {
       db.then((conn) => {
         conn
-          .query(`SELECT * FROM USER WHERE userId = '${data.userId}'`)
+          .query(`SELECT * FROM user WHERE userId = '${data.userId}'`)
           .then((rows) => {
             res(rows);
           });
@@ -31,7 +31,7 @@ module.exports = {
     return new Promise((res, rej) => {
       db.then((conn) => {
         conn
-          .query(`SELECT userId FROM USER WHERE email = '${data.email}'`)
+          .query(`SELECT userId FROM user WHERE email = '${data.email}'`)
           .then((rows) => {
             res(rows);
           });
@@ -44,8 +44,21 @@ module.exports = {
     return new Promise((res, rej) => {
       db.then((conn) => {
         conn
+          .query(`SELECT password FROM user WHERE id = '${data.id}'`)
+          .then((rows) => {
+            res(rows);
+          });
+      }).catch((err) => {
+        rej(err);
+      });
+    });
+  },
+  updatePassword: function (data) {
+    return new Promise((res, rej) => {
+      db.then((conn) => {
+        conn
           .query(
-            `SELECT password FROM USER WHERE userId = '${data.userId}' AND email = '${data.email}'`
+            `UPDATE user SET password='${data.password}' WHERE id='${data.id}';`
           )
           .then((rows) => {
             res(rows);
@@ -60,7 +73,7 @@ module.exports = {
       db.then((conn) => {
         conn
           .query(
-            `INSERT INTO USER(userId, email, password) VALUES ('${data.userId}', '${data.email}', '${data.password}')`
+            `INSERT INTO user(userId, email, password) VALUES ('${data.userId}', '${data.email}', '${data.password}')`
           )
           .then((rows) => {
             res(rows);

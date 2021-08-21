@@ -1,5 +1,5 @@
 const user = require('./user');
 
-const controller = { user };
+const controllers = { user };
 
-module.exports = controller;
+module.exports = controllers;

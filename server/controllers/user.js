@@ -44,13 +44,9 @@ module.exports = {
         res.status(400).send('중복된 이메일');
         return;
       }
-      bcrypt.hash(password, 10, async (err, hash) => {
-        if (err) {
-          res.status(500).send('서버 에러');
-        }
-        await models.user.insert({ userId, email, password: hash });
-        res.status(200).send('회원가입 성공');
-      });
+      const hashed = await bcrypt.hash(password, 10);
+      await models.user.insert({ userId, email, password: hashed });
+      res.status(201).send('회원가입 성공');
     } catch (error) {
       console.log(error);
       res.status(500).send('서버 에러');
@@ -71,15 +67,35 @@ module.exports = {
       res.status(500).send('서버 에러');
     }
   },
-  findPassword: async (req, res) => {
+  findUserById: async (req, res) => {
     try {
       const { query } = req;
-      const { userId, email } = query;
-      const [password] = await models.user.findPassword({ userId, email });
-      if (password) {
-        res.status(200).send({ foundData: password.password });
+      const { userId } = query;
+      const [user] = await models.user.findByUserId({ userId });
+      if (user) {
+        res.status(200).send({ user });
       } else {
         res.status(404).send('존재하지 않는 유저');
+      }
+    } catch (error) {
+      console.log(error);
+      res.status(500).send('서버 에러');
+    }
+  },
+  updatePassword: async (req, res) => {
+    try {
+      const { body } = req;
+      const { id, newPassword } = body;
+      const [{ password: oldPassword }] = await models.user.findPassword({
+        id,
+      });
+      const matchPassword = await bcrypt.compare(newPassword, oldPassword);
+      if (!matchPassword) {
+        const password = await bcrypt.hash(newPassword, 10);
+        await models.user.updatePassword({ id, password });
+        res.status(201).send('비밀번호 재설정 성공');
+      } else {
+        res.status(200).send('입력한 비밀번호가 이전 비밀번호와 동일함');
       }
     } catch (error) {
       console.log(error);
