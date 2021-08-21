@@ -24,6 +24,8 @@ app.use(
   })
 );
 
+console.log(process.env.LOCAL_CLIENT_URL);
+
 app.use('/', router);
 
 app.listen(PORT, () => {
