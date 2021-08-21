@@ -4,7 +4,7 @@ const morgan = require('morgan');
 const helmet = require('helmet');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-const router = require('./routes');
+const userRouter = require('./routes/user');
 
 const PORT = 8080;
 const app = express();
@@ -18,13 +18,13 @@ app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 app.use(
   cors({
-    origin: 'http://crud-project-test.s3-website.ap-northeast-2.amazonaws.com',
+    origin: 'http://localhost:3000',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
   })
 );
 
-app.use('/', router);
+app.use('/', userRouter);
 
 app.listen(PORT, () => {
   console.log(`✅ Listening on http://localhost:${PORT}`);

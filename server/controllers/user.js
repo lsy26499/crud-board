@@ -1,13 +1,15 @@
-const models = require('./models');
+const models = require('../models');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
 module.exports = {
   signIn: async (req, res) => {
     try {
       const { body } = req;
       const { userId, password } = body;
-      const [user] = await models.users.findByUserId({ userId });
-      if (user && user.password === password) {
+      const [user] = await models.user.findByUserId({ userId });
+      const matchPassword = await bcrypt.compare(password, user.password);
+      if (user && matchPassword) {
         const { email, userId } = user;
         const accessToken = jwt.sign(
           { email, userId },
@@ -32,8 +34,8 @@ module.exports = {
     try {
       const { body } = req;
       const { userId, email, password } = body;
-      const [userFoundById] = await models.users.findByUserId({ userId });
-      const [userFoundByEmail] = await models.users.findByEmail({ email });
+      const [userFoundById] = await models.user.findByUserId({ userId });
+      const [userFoundByEmail] = await models.user.findByEmail({ email });
       if (userFoundById) {
         res.status(400).send('이미 가입된 유저');
         return;
@@ -42,8 +44,13 @@ module.exports = {
         res.status(400).send('중복된 이메일');
         return;
       }
-      await models.users.insert({ userId, email, password });
-      res.status(200).send('회원가입 성공');
+      bcrypt.hash(password, 10, async (err, hash) => {
+        if (err) {
+          res.status(500).send('서버 에러');
+        }
+        await models.user.insert({ userId, email, password: hash });
+        res.status(200).send('회원가입 성공');
+      });
     } catch (error) {
       console.log(error);
       res.status(500).send('서버 에러');
@@ -53,7 +60,7 @@ module.exports = {
     try {
       const { query } = req;
       const { email } = query;
-      const [userId] = await models.users.findUserId({ email });
+      const [userId] = await models.user.findUserId({ email });
       if (userId) {
         res.status(200).send({ foundData: userId.userId });
       } else {
@@ -68,7 +75,7 @@ module.exports = {
     try {
       const { query } = req;
       const { userId, email } = query;
-      const [password] = await models.users.findPassword({ userId, email });
+      const [password] = await models.user.findPassword({ userId, email });
       if (password) {
         res.status(200).send({ foundData: password.password });
       } else {
