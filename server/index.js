@@ -18,7 +18,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 app.use(
   cors({
-    origin: 'http://localhost:3000',
+    origin: 'http://crud-project-test.s3-website.ap-northeast-2.amazonaws.com/',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
   })
