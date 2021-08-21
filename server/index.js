@@ -20,11 +20,10 @@ app.use(
   cors({
     origin: process.env.LOCAL_CLIENT_URL,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    optionsSuccessStatus: 200,
     credentials: true,
   })
 );
-
-console.log(process.env.LOCAL_CLIENT_URL);
 
 app.use('/', router);
 
