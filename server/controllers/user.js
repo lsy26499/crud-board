@@ -73,7 +73,7 @@ module.exports = {
       const { userId } = query;
       const [user] = await models.user.findByUserId({ userId });
       if (user) {
-        res.status(200).send({ user });
+        res.status(200).send({ user: { id: user.id, userId: user.userId } });
       } else {
         res.status(404).send('존재하지 않는 유저');
       }

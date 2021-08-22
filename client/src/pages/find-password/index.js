@@ -5,22 +5,15 @@ import { Header } from '../../compoentns';
 
 const FindPassword = () => {
   const [userId, setUserId] = useState('');
-  const [email, setEmail] = useState('');
-  const { foundData } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
   const onSubmit = (e) => {
     e.preventDefault();
-    if (email === '' || userId === '') {
-      alert('아이디와 이메일을 입력해주세요');
+    if (userId === '') {
+      alert('아이디를 입력해주세요');
       return;
     }
-    dispatch(actions.findPassword({ email, userId }));
-  };
-
-  const onChangeEmail = (e) => {
-    const value = e.target.value;
-    setEmail(value);
+    dispatch(actions.checkUser({ userId }));
   };
 
   const onChangeUserId = (e) => {
@@ -35,13 +28,6 @@ const FindPassword = () => {
         <h1>비밀번호 찾기</h1>
         <form onSubmit={onSubmit}>
           <input
-            placeholder='이메일'
-            type='email'
-            name='email'
-            value={email}
-            onChange={onChangeEmail}
-          ></input>
-          <input
             placeholder='아이디'
             name='userId'
             value={userId}
@@ -49,7 +35,6 @@ const FindPassword = () => {
           ></input>
           <button type='submit'>확인</button>
         </form>
-        {foundData && <div>{`비밀번호: ${foundData}`}</div>}
       </main>
     </div>
   );

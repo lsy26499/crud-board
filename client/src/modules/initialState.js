@@ -7,5 +7,9 @@ export const initialState = {
     tokenType: null,
     isLoggedIn: false,
     foundData: null,
+    user: {
+      id: null,
+      userId: null,
+    },
   },
 };

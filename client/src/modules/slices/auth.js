@@ -17,7 +17,8 @@ export const authSlice = createSlice({
     },
     signUp: (state, action) => {},
     findUserId: (state, action) => {},
-    findPassword: (state, action) => {},
+    checkUser: (state, action) => {},
+    updatePassword: (state, action) => {},
     setFoundUserData: (state, action) => {
       const { payload } = action;
       const { foundData } = payload;

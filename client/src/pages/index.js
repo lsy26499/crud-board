@@ -3,3 +3,4 @@ export { default as SignIn } from './signin';
 export { default as SignUp } from './signup';
 export { default as FindUserId } from './find-userId';
 export { default as FindPassword } from './find-password';
+export { default as UpdatePassword } from './update-password';

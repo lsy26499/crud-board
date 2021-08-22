@@ -39,6 +39,9 @@ function* findUserIdRequest({ payload }) {
     const { data } = yield axios.get(`/find-id/?email=${email}`);
     const { foundData } = data;
     yield put(authActions.setFoundUserData({ foundData }));
+    const history = yield getContext('history');
+    yield put(authActions.removeFoundUserData());
+    yield history.push('/sign-in');
   } catch (error) {
     console.log(error);
     const {
@@ -48,14 +51,32 @@ function* findUserIdRequest({ payload }) {
   }
 }
 
-function* findPasswordRequest({ payload }) {
+function* checkUserRequest({ payload }) {
   try {
-    const { userId, email } = payload;
-    const { data } = yield axios.get(
-      `/find-password/?email=${email}&userId=${userId}`
-    );
-    const { foundData } = data;
-    yield put(authActions.setFoundUserData({ foundData }));
+    const { userId } = payload;
+    const { data } = yield axios.get(`/check-user/?userId=${userId}`);
+    const { user: foundData } = data;
+    const history = yield getContext('history');
+    if (data) {
+      yield put(authActions.setFoundUserData({ foundData }));
+      yield history.push('/update-password');
+    }
+  } catch (error) {
+    console.log(error);
+    const {
+      response: { data },
+    } = error;
+    alert(data);
+  }
+}
+
+function* updatePasswordRequest({ payload }) {
+  try {
+    const { data } = yield axios.patch(`/update-password`, { ...payload });
+    const history = yield getContext('history');
+    yield put(authActions.removeFoundUserData());
+    alert(data);
+    yield history.push('/sign-in');
   } catch (error) {
     console.log(error);
     const {
@@ -89,9 +110,14 @@ function* findUserIdWatcher() {
   yield takeEvery(findUserId, findUserIdRequest);
 }
 
-function* findPasswordWatcher() {
-  const { findPassword } = authActions;
-  yield takeEvery(findPassword, findPasswordRequest);
+function* checkUserWatcher() {
+  const { checkUser } = authActions;
+  yield takeEvery(checkUser, checkUserRequest);
+}
+
+function* updatePasswordWatcher() {
+  const { updatePassword } = authActions;
+  yield takeEvery(updatePassword, updatePasswordRequest);
 }
 
 function* signOutWatcher() {
@@ -104,7 +130,8 @@ export default function* authSaga() {
     fork(signInWatcher),
     fork(signUpWatcher),
     fork(findUserIdWatcher),
-    fork(findPasswordWatcher),
+    fork(checkUserWatcher),
+    fork(updatePasswordWatcher),
     fork(signOutWatcher),
   ]);
 }

@@ -1,6 +1,13 @@
 import { Router, Route, Switch } from 'react-router-dom';
 import { history } from './modules/store';
-import { Home, SignIn, SignUp, FindUserId, FindPassword } from './pages';
+import {
+  Home,
+  SignIn,
+  SignUp,
+  FindUserId,
+  FindPassword,
+  UpdatePassword,
+} from './pages';
 import './index.scss';
 
 const App = () => {
@@ -13,6 +20,7 @@ const App = () => {
           <Route path='/sign-up' component={SignUp} />
           <Route path='/find-id' component={FindUserId} />
           <Route path='/find-password' component={FindPassword} />
+          <Route path='/update-password' component={UpdatePassword} />
         </Switch>
       </Router>
     </div>

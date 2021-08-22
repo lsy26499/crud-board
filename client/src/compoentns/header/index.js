@@ -14,10 +14,6 @@ const Header = () => {
     history.push('/');
   };
 
-  useEffect(() => {
-    dispatch(actions.removeFoundUserData());
-  }, [history.location]);
-
   return (
     <header className='header'>
       <nav className='header-nav'>
