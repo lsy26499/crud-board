@@ -5,6 +5,7 @@ const helmet = require('helmet');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const userRouter = require('./routes/user');
+const boardRouter = require('./routes/board');
 
 const PORT = 8080;
 const app = express();
@@ -25,6 +26,7 @@ app.use(
 );
 
 app.use('/', userRouter);
+app.use('/', boardRouter);
 
 app.listen(PORT, () => {
   console.log(`✅ Listening on http://localhost:${PORT}`);

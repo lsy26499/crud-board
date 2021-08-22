@@ -8,6 +8,9 @@ module.exports = {
           .query(`SELECT * FROM user WHERE email = '${data.email}'`)
           .then((rows) => {
             res(rows);
+          })
+          .catch((err) => {
+            rej(err);
           });
       }).catch((err) => {
         rej(err);
@@ -21,6 +24,9 @@ module.exports = {
           .query(`SELECT * FROM user WHERE userId = '${data.userId}'`)
           .then((rows) => {
             res(rows);
+          })
+          .catch((err) => {
+            rej(err);
           });
       }).catch((err) => {
         rej(err);
@@ -34,6 +40,9 @@ module.exports = {
           .query(`SELECT userId FROM user WHERE email = '${data.email}'`)
           .then((rows) => {
             res(rows);
+          })
+          .catch((err) => {
+            rej(err);
           });
       }).catch((err) => {
         rej(err);
@@ -47,6 +56,9 @@ module.exports = {
           .query(`SELECT password FROM user WHERE id = '${data.id}'`)
           .then((rows) => {
             res(rows);
+          })
+          .catch((err) => {
+            rej(err);
           });
       }).catch((err) => {
         rej(err);
@@ -62,6 +74,9 @@ module.exports = {
           )
           .then((rows) => {
             res(rows);
+          })
+          .catch((err) => {
+            rej(err);
           });
       }).catch((err) => {
         rej(err);
@@ -77,6 +92,9 @@ module.exports = {
           )
           .then((rows) => {
             res(rows);
+          })
+          .catch((err) => {
+            rej(err);
           });
       }).catch((err) => {
         rej(err);
