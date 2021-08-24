@@ -4,3 +4,6 @@ export { default as SignUp } from './signup';
 export { default as FindUserId } from './find-userId';
 export { default as FindPassword } from './find-password';
 export { default as UpdatePassword } from './update-password';
+export { default as Post } from './post';
+export { default as CreatePost } from './create-post';
+export { default as UpdatePost } from './update-post';

@@ -7,6 +7,9 @@ import {
   FindUserId,
   FindPassword,
   UpdatePassword,
+  Post,
+  CreatePost,
+  UpdatePost,
 } from './pages';
 import './index.scss';
 
@@ -21,6 +24,9 @@ const App = () => {
           <Route path='/find-id' component={FindUserId} />
           <Route path='/find-password' component={FindPassword} />
           <Route path='/update-password' component={UpdatePassword} />
+          <Route path='/post/:id' component={Post} />
+          <Route path='/create-post' component={CreatePost} />
+          <Route path='/update-post/:id' component={UpdatePost} />
         </Switch>
       </Router>
     </div>

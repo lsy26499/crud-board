@@ -32,6 +32,11 @@ export const authSlice = createSlice({
       state.accessToken = null;
       state.tokenType = null;
       state.isLoggedIn = false;
+      state.user = {
+        id: null,
+        userId: null,
+        email: null,
+      };
     },
   },
 });

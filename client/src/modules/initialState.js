@@ -13,4 +13,8 @@ export const initialState = {
       email: null,
     },
   },
+  board: {
+    posts: [],
+    currentPost: {},
+  },
 };

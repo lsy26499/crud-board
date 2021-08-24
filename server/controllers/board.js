@@ -5,8 +5,8 @@ module.exports = {
     try {
       const { body } = req;
       const { id, title, content } = body;
-      await models.board.createPost({ id, title, content });
-      res.status(200).send('게시글 작성 성공');
+      const data = await models.board.createPost({ id, title, content });
+      res.status(200).send({ id: data.insertId });
     } catch (error) {
       console.log(error);
       res.status(500).send('서버 에러');
@@ -47,14 +47,8 @@ module.exports = {
   },
   deletePost: async (req, res) => {
     try {
-      const { body, params } = req;
-      const { author } = body;
+      const { params } = req;
       const { id } = params;
-      const [post] = await models.board.findPostById({ id });
-      if (post.author !== author) {
-        res.status(403).send('유효하지 않은 요청');
-        return;
-      }
       await models.board.deletePost({ id });
       res.status(200).send('게시글 삭제 성공');
     } catch (error) {

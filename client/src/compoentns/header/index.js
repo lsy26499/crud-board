@@ -35,8 +35,11 @@ const Header = () => {
             </>
           ) : (
             <>
-              <li className='nav-item' onClick={() => history.push('/my-page')}>
-                마이페이지
+              <li
+                className='nav-item'
+                onClick={() => history.push('/create-post')}
+              >
+                글쓰기
               </li>
               <li className='nav-item highlight' onClick={onClicSignOut}>
                 로그아웃
