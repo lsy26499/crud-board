@@ -16,7 +16,7 @@ module.exports = {
     try {
       const { params } = req;
       const { id } = params;
-      const [post] = await models.board.findPostById({ id });
+      const [post] = await models.board.findFullPostDataById({ id });
       if (post) {
         res.status(200).send({ post });
         return;
@@ -30,17 +30,45 @@ module.exports = {
   },
   updatePost: async (req, res) => {
     try {
-      res.status(200).send('123');
-    } catch (error) {}
+      const { body, params } = req;
+      const { author, title, content } = body;
+      const { id } = params;
+      const [post] = await models.board.findPostById({ id });
+      if (post.author !== author) {
+        res.status(403).send('유효하지 않은 요청');
+        return;
+      }
+      await models.board.updatePost({ title, content, id });
+      res.status(200).send('게시글 업데이트 성공');
+    } catch (error) {
+      console.log(error);
+      res.status(500).send('서버 에러');
+    }
   },
   deletePost: async (req, res) => {
     try {
-      res.status(200).send('123');
-    } catch (error) {}
+      const { body, params } = req;
+      const { author } = body;
+      const { id } = params;
+      const [post] = await models.board.findPostById({ id });
+      if (post.author !== author) {
+        res.status(403).send('유효하지 않은 요청');
+        return;
+      }
+      await models.board.deletePost({ id });
+      res.status(200).send('게시글 삭제 성공');
+    } catch (error) {
+      console.log(error);
+      res.status(500).send('서버 에러');
+    }
   },
   getPostList: async (req, res) => {
     try {
-      res.status(200).send('123');
-    } catch (error) {}
+      const posts = await models.board.getPostList();
+      res.status(200).send({ posts });
+    } catch (error) {
+      console.log(error);
+      res.status(500).send('서버 에러');
+    }
   },
 };

@@ -11,7 +11,7 @@ function* signInRequest({ payload }) {
     const history = yield getContext('history');
     axios.defaults.headers['AccessToken'] = accessToken;
     axios.defaults.headers['Authorization'] = authorization;
-    yield put(authActions.signInSuccess({ accessToken, tokenType }));
+    yield put(authActions.signInSuccess({ ...data }));
     yield history.replace('/');
   } catch (error) {
     console.log(error);

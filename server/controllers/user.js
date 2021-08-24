@@ -10,7 +10,7 @@ module.exports = {
       const [user] = await models.user.findByUserId({ userId });
       const matchPassword = await bcrypt.compare(password, user.password);
       if (user && matchPassword) {
-        const { email, userId } = user;
+        const { id, email, userId } = user;
         const accessToken = jwt.sign(
           { email, userId },
           process.env.JWT_SECRET,
@@ -19,9 +19,12 @@ module.exports = {
           }
         );
         const tokenType = 'Bearer';
-        res
-          .status(200)
-          .send({ message: '로그인 성공', accessToken, tokenType });
+        res.status(200).send({
+          message: '로그인 성공',
+          accessToken,
+          tokenType,
+          user: { id, email, userId },
+        });
       } else {
         res.status(400).send('아이디 또는 비밀번호가 잘못되었습니다');
       }

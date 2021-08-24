@@ -10,6 +10,7 @@ export const initialState = {
     user: {
       id: null,
       userId: null,
+      email: null,
     },
   },
 };

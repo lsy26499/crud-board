@@ -10,10 +10,11 @@ export const authSlice = createSlice({
     signIn: (state, action) => {},
     signInSuccess: (state, action) => {
       const { payload } = action;
-      const { accessToken, tokenType } = payload;
+      const { user, accessToken, tokenType } = payload;
       state.accessToken = accessToken;
       state.tokenType = tokenType;
       state.isLoggedIn = true;
+      state.user = user;
     },
     signUp: (state, action) => {},
     findUserId: (state, action) => {},
