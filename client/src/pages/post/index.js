@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useHistory } from 'react-router-dom';
 import { Header } from '../../compoentns';
 import { actions } from '../../modules/store';
+import './index.scss';
 
 const Post = () => {
   const { user } = useSelector((state) => state.auth);
@@ -31,20 +32,20 @@ const Post = () => {
   return (
     <div>
       <Header></Header>
-      <div>
+      <section className='post'>
         {user.userId === userId && (
           <div>
             <button onClick={onClickUpdateButton}>수정</button>
             <button onClick={onClickDeleteButton}>삭제</button>
           </div>
         )}
-        <h1>{title}</h1>
-        <div>
+        <h1 className='title'>{title}</h1>
+        <div className='title-desc'>
           <h5>{userId}</h5>
           <h5>{created_at}</h5>
         </div>
-        <main>{content}</main>
-      </div>
+        <main className='content'>{content}</main>
+      </section>
     </div>
   );
 };

@@ -3,6 +3,7 @@ import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Header } from '../../compoentns';
 import { actions } from '../../modules/store';
+import './index.scss';
 
 const Home = () => {
   const { posts } = useSelector((state) => state.board);
@@ -18,16 +19,22 @@ const Home = () => {
   }, []);
 
   return (
-    <div>
+    <div className='home'>
       <Header />
-      <main>
-        {posts.map((post) => (
-          <article key={post.id} onClick={() => onClickPost(post.id)}>
-            <h3>{post.title}</h3>
-            <h4>{post.userId}</h4>
-            <span>{post.created_at}</span>
-          </article>
-        ))}
+      <main className='home-container'>
+        <section className='article-container'>
+          {posts.map((post) => (
+            <article
+              className='article-card'
+              key={post.id}
+              onClick={() => onClickPost(post.id)}
+            >
+              <h3 className='article-title'>{post.title}</h3>
+              <h4 className='article-username'>{post.userId}</h4>
+              <span className='article-created-at'>{post.created_at}</span>
+            </article>
+          ))}
+        </section>
       </main>
     </div>
   );

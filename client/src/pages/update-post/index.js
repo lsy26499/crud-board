@@ -28,20 +28,22 @@ const UpdatePost = () => {
   return (
     <div>
       <Header></Header>
-      <main>
-        <form onSubmit={onSubmit}>
-          <input
-            name='title'
-            value={values.title}
-            onChange={onChangeValues}
-          ></input>
-          <textarea
-            name='content'
-            value={values.content}
-            onChange={onChangeValues}
-          ></textarea>
-          <button type='submit'>저장</button>
-        </form>
+      <main className='update-post'>
+        <section className='form-section'>
+          <form className='update-form' onSubmit={onSubmit}>
+            <input
+              name='title'
+              value={values.title}
+              onChange={onChangeValues}
+            ></input>
+            <textarea
+              name='content'
+              value={values.content}
+              onChange={onChangeValues}
+            ></textarea>
+            <button type='submit'>저장</button>
+          </form>
+        </section>
       </main>
     </div>
   );

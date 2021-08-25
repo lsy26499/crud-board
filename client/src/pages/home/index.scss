@@ -1,0 +1,29 @@
+@import '../../scss';
+
+.home {
+  .home-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 0px;
+    .article-container {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 40px 36px;
+      .article-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 250px;
+        height: 200px;
+        border-radius: 8px;
+        box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+        cursor: pointer;
+        &:hover {
+          box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+        }
+      }
+    }
+  }
+}

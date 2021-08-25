@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { actions } from '../../modules/store';
 import { Header } from '../../compoentns';
+import './index.scss';
 
 const FindUserId = () => {
   const [email, setEmail] = useState('');
@@ -25,19 +26,21 @@ const FindUserId = () => {
   return (
     <div>
       <Header />
-      <main>
-        <h1>아이디 찾기</h1>
-        <form onSubmit={onSubmit}>
-          <input
-            placeholder='이메일'
-            type='email'
-            name='email'
-            value={email}
-            onChange={onChangeEmail}
-          ></input>
-          <button type='submit'>확인</button>
-        </form>
-        {foundData && <div>{`아이디: ${foundData}`}</div>}
+      <main className='find-id'>
+        <h1 className='title'>아이디 찾기</h1>
+        <div className='form-section'>
+          <form className='find-id-form' onSubmit={onSubmit}>
+            <input
+              placeholder='이메일'
+              type='email'
+              name='email'
+              value={email}
+              onChange={onChangeEmail}
+            ></input>
+            <button type='submit'>확인</button>
+          </form>
+          {foundData && <div>{`아이디: ${foundData}`}</div>}
+        </div>
       </main>
     </div>
   );

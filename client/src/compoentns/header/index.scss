@@ -1,13 +1,18 @@
 @import '../../scss/';
 
 .header {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 1px solid $white-300;
   .header-nav {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 24px;
-    border-bottom: 1px solid $white-300;
+    width: 1300px;
+    padding: 20px 2rem;
     .home-button {
       cursor: pointer;
     }

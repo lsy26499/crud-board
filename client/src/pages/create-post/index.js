@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Header } from '../../compoentns';
 import { actions } from '../../modules/store';
+import './index.scss';
 
 const CreatePost = () => {
   const [values, setValues] = useState({
@@ -26,20 +27,22 @@ const CreatePost = () => {
   return (
     <div>
       <Header></Header>
-      <main>
-        <form onSubmit={onSubmit}>
-          <input
-            name='title'
-            value={values.title}
-            onChange={onChangeValues}
-          ></input>
-          <textarea
-            name='content'
-            value={values.content}
-            onChange={onChangeValues}
-          ></textarea>
-          <button type='submit'>저장</button>
-        </form>
+      <main className='create-post'>
+        <section className='form-section'>
+          <form className='create-form' onSubmit={onSubmit}>
+            <input
+              name='title'
+              value={values.title}
+              onChange={onChangeValues}
+            ></input>
+            <textarea
+              name='content'
+              value={values.content}
+              onChange={onChangeValues}
+            ></textarea>
+            <button type='submit'>저장</button>
+          </form>
+        </section>
       </main>
     </div>
   );
