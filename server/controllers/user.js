@@ -1,6 +1,7 @@
 const models = require('../models');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const utils = require('../utils');
 
 module.exports = {
   signIn: async (req, res) => {
@@ -37,6 +38,13 @@ module.exports = {
     try {
       const { body } = req;
       const { userId, email, password } = body;
+      if (!utils.validateEmail(email)) {
+        res.status(400).send('잘못된 이메일');
+      }
+      if (userId.trim() === '' || password.trim() === '') {
+        res.status(400).send('빈 아이디 또는 패스워드');
+      }
+
       const [userFoundById] = await models.user.findByUserId({ userId });
       const [userFoundByEmail] = await models.user.findByEmail({ email });
       if (userFoundById) {

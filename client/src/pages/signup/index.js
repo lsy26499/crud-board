@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { actions } from '../../modules/store';
 import { Header } from '../../compoentns';
+import { validateEmail } from '../../utils';
 
 const SignUp = () => {
   const [values, setValues] = useState({
@@ -22,8 +23,13 @@ const SignUp = () => {
     e.preventDefault();
     const { userId, email, password, secondPassword } = values;
     const isInputEmpty = Boolean(
-      Object.values(values).filter((item) => item === '').length
+      Object.values(values).filter((item) => item.trim() === '').length
     );
+
+    if (!validateEmail(email)) {
+      alert('잘못된 이메일 주소입니다');
+      return;
+    }
 
     if (isInputEmpty) {
       alert('모든 항목을 작성해주세요');
