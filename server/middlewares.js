@@ -8,6 +8,7 @@ module.exports = {
         const accessToken = authorization.split(' ')[1];
         if (accessToken) {
           const decoded = jwt.verify(accessToken, process.env.JWT_SECRET);
+          req.decoded = decoded;
           next();
           return;
         }

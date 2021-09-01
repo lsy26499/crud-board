@@ -20,6 +20,10 @@ const UpdatePost = () => {
 
   const onSubmit = (e) => {
     e.preventDefault();
+    if (values.title.trim() === '') {
+      alert('제목을 입력해주세요');
+      return;
+    }
     dispatch(
       actions.updatePost({ id, title: values.title, content: values.content })
     );

@@ -6,7 +6,7 @@ module.exports = {
       db.then((conn) => {
         conn
           .query(
-            `INSERT INTO board (title, content, author) VALUES ('${data.title}', '${data.content}', '${data.id}')`
+            `INSERT INTO board (title, content, userId) VALUES ('${data.title}', '${data.content}', '${data.id}')`
           )
           .then((rows) => {
             res(rows);
@@ -40,7 +40,7 @@ module.exports = {
       db.then((conn) => {
         conn
           .query(
-            `SELECT board.id, board.title, user.userId, board.content, board.created_at FROM board INNER JOIN user ON board.author=user.id WHERE board.id='${data.id}'`
+            `SELECT board.id, board.title, user.userId, board.content, board.created_at FROM board INNER JOIN user ON board.userId=user.id WHERE board.id='${data.id}'`
           )
           .then((rows) => {
             res(rows);
@@ -92,7 +92,7 @@ module.exports = {
       db.then((conn) => {
         conn
           .query(
-            `SELECT board.id, user.userId, board.title, board.created_at FROM board LEFT JOIN user ON board.author=user.id`
+            `SELECT board.id, user.userId, board.title, board.created_at FROM board LEFT JOIN user ON board.userId=user.id`
           )
           .then((rows) => {
             res(rows);
