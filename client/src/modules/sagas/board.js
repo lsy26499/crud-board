@@ -8,6 +8,7 @@ import {
 } from 'redux-saga/effects';
 import { boardActions } from '../slices/board';
 import { axios } from '../../utils';
+import { actions } from '../store';
 
 function* getPostListRequest({ payload }) {
   try {
@@ -53,8 +54,13 @@ function* createPostRequest({ payload }) {
   } catch (error) {
     console.log(error);
     const {
-      response: { data },
+      response: { data, status },
     } = error;
+    if (status === 401) {
+      const history = yield getContext('history');
+      yield put(actions.signOut());
+      history.push('/');
+    }
     alert(data);
   }
 }
@@ -73,8 +79,13 @@ function* updatePostRequest({ payload }) {
   } catch (error) {
     console.log(error);
     const {
-      response: { data },
+      response: { data, status },
     } = error;
+    if (status === 401) {
+      const history = yield getContext('history');
+      yield put(actions.signOut());
+      history.push('/');
+    }
     alert(data);
   }
 }
@@ -89,8 +100,13 @@ function* deletePostRequest({ payload }) {
   } catch (error) {
     console.log(error);
     const {
-      response: { data },
+      response: { data, status },
     } = error;
+    if (status === 401) {
+      const history = yield getContext('history');
+      yield put(actions.signOut());
+      history.push('/');
+    }
     alert(data);
   }
 }
