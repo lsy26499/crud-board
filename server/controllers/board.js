@@ -4,7 +4,7 @@ module.exports = {
   createPost: async (req, res) => {
     try {
       const { body, decoded } = req;
-      const { title, content, summary, endDate } = body;
+      const { title, content, summary } = body;
       const { userId } = decoded;
       if (title.trim() === '') {
         res.status(400).send('제목을 입력해주세요');
@@ -22,7 +22,6 @@ module.exports = {
         title,
         content,
         summary,
-        endDate,
       });
       res.status(200).send({ id: data.insertId });
     } catch (error) {

@@ -92,7 +92,7 @@ module.exports = {
       db.then((conn) => {
         conn
           .query(
-            `SELECT board.id, user.userId, board.title, board.summary, board.createdAt FROM board LEFT JOIN user ON board.userId=user.id`
+            `SELECT board.id, user.userId, board.title, board.summary, board.createdAt FROM board LEFT JOIN user ON board.userId=user.id ORDER BY id DESC`
           )
           .then((rows) => {
             res(rows);

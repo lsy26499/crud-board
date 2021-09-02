@@ -42,9 +42,11 @@ const Post = () => {
             <p className='summary'>{summary}</p>
             <div className='title-desc'>
               <span>{`by ${userId}`}</span>
-              <span>
-                {`${formatDistance(new Date(createdAt), new Date())} ago`}
-              </span>
+              {createdAt && (
+                <span>
+                  {`${formatDistance(new Date(createdAt), new Date())} ago`}
+                </span>
+              )}
             </div>
             <main className='content'>{content}</main>
           </section>
