@@ -37,6 +37,12 @@ const Post = () => {
       <Header />
       <Main>
         <section className='post'>
+          {user.userId === userId && (
+            <ul className='nav-buttons'>
+              <li onClick={onClickUpdateButton}>수정</li>
+              <li onClick={onClickDeleteButton}>삭제</li>
+            </ul>
+          )}
           <section className='post-content'>
             <h1 className='title'>{title}</h1>
             <p className='summary'>{summary}</p>
@@ -50,12 +56,6 @@ const Post = () => {
             </div>
             <main className='content'>{content}</main>
           </section>
-          {user.userId === userId && (
-            <ul className='nav-buttons'>
-              <li onClick={onClickUpdateButton}>수정</li>
-              <li onClick={onClickDeleteButton}>삭제</li>
-            </ul>
-          )}
         </section>
       </Main>
     </div>
