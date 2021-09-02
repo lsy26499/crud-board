@@ -4,7 +4,7 @@ module.exports = {
   createPost: async (req, res) => {
     try {
       const { body, decoded } = req;
-      const { title, content } = body;
+      const { title, content, summary, endDate } = body;
       const { userId } = decoded;
       if (title.trim() === '') {
         res.status(400).send('제목을 입력해주세요');
@@ -21,6 +21,8 @@ module.exports = {
         id: user.id,
         title,
         content,
+        summary,
+        endDate,
       });
       res.status(200).send({ id: data.insertId });
     } catch (error) {
@@ -47,7 +49,7 @@ module.exports = {
   updatePost: async (req, res) => {
     try {
       const { body, params, decoded } = req;
-      const { title, content } = body;
+      const { title, content, summary } = body;
       const { id } = params;
       const { userId } = decoded;
 
@@ -67,7 +69,7 @@ module.exports = {
         res.status(403).send('유효하지 않은 요청');
         return;
       }
-      await models.board.updatePost({ title, content, id });
+      await models.board.updatePost({ title, content, summary, id });
       res.status(200).send('게시글 업데이트 성공');
     } catch (error) {
       console.log(error);

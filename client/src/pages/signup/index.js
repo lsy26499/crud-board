@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { actions } from '../../modules/store';
-import { Header } from '../../compoentns';
+import { Header, Main } from '../../compoentns';
 import { validateEmail } from '../../utils';
+import './index.scss';
 
 const SignUp = () => {
   const [values, setValues] = useState({
@@ -46,39 +47,53 @@ const SignUp = () => {
   return (
     <div>
       <Header />
-      <main>
-        <h1>회원가입</h1>
-        <form onSubmit={onSubmit}>
-          <input
-            placeholder='아이디'
-            name='userId'
-            value={values.userId}
-            onChange={onChangeInputValues}
-          ></input>
-          <input
-            placeholder='이메일'
-            type='email'
-            name='email'
-            value={values.email}
-            onChange={onChangeInputValues}
-          ></input>
-          <input
-            placeholder='비밀번호'
-            type='password'
-            name='password'
-            value={values.password}
-            onChange={onChangeInputValues}
-          ></input>
-          <input
-            placeholder='비밀번호 확인'
-            type='password'
-            name='secondPassword'
-            value={values.secondPassword}
-            onChange={onChangeInputValues}
-          ></input>
-          <button type='submit'>회원가입</button>
-        </form>
-      </main>
+      <Main>
+        <div className='signin-container'>
+          <h1 className='title'>회원가입</h1>
+          <form className='form' onSubmit={onSubmit}>
+            <div className='form-item'>
+              <label htmlFor='userId'>아이디</label>
+              <input
+                placeholder='아이디'
+                name='userId'
+                value={values.userId}
+                onChange={onChangeInputValues}
+              ></input>
+            </div>
+            <div className='form-item'>
+              <label htmlFor='email'>이메일</label>
+              <input
+                placeholder='이메일'
+                type='email'
+                name='email'
+                value={values.email}
+                onChange={onChangeInputValues}
+              ></input>
+            </div>
+            <div className='form-item'>
+              <label htmlFor='password'>비밀번호</label>
+              <input
+                placeholder='비밀번호'
+                type='password'
+                name='password'
+                value={values.password}
+                onChange={onChangeInputValues}
+              ></input>
+            </div>
+            <div className='form-item'>
+              <label htmlFor='secondPassword'>비밀번호 확인</label>
+              <input
+                placeholder='비밀번호 확인'
+                type='password'
+                name='secondPassword'
+                value={values.secondPassword}
+                onChange={onChangeInputValues}
+              ></input>
+            </div>
+            <button type='submit'>회원가입</button>
+          </form>
+        </div>
+      </Main>
     </div>
   );
 };

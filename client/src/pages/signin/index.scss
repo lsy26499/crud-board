@@ -1,0 +1,37 @@
+@import '../../scss';
+
+.login-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  .title {
+    font-size: 30px;
+    margin-bottom: 30px;
+  }
+  .form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    .form-item {
+      margin-bottom: 8px;
+      label {
+        margin-right: 10px;
+      }
+    }
+    button {
+      margin-bottom: 20px;
+    }
+  }
+  nav {
+    display: flex;
+    flex-direction: row;
+    span:not(.bar) {
+      cursor: pointer;
+      &:hover {
+        color: $blue-500;
+      }
+    }
+  }
+}

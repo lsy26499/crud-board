@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { Header } from '../../compoentns';
+import { Main, PostHeader } from '../../compoentns';
 import { actions } from '../../modules/store';
 import './index.scss';
 
 const CreatePost = () => {
   const [values, setValues] = useState({
     title: '',
+    summary: '',
     content: '',
   });
   const dispatch = useDispatch();
@@ -24,30 +25,46 @@ const CreatePost = () => {
       return;
     }
     dispatch(
-      actions.createPost({ title: values.title, content: values.content })
+      actions.createPost({
+        title: values.title,
+        content: values.content,
+        summary: values.summary,
+      })
     );
   };
 
   return (
     <div>
-      <Header></Header>
-      <main className='create-post'>
-        <section className='form-section'>
-          <form className='create-form' onSubmit={onSubmit}>
-            <input
-              name='title'
-              value={values.title}
-              onChange={onChangeValues}
-            ></input>
-            <textarea
-              name='content'
-              value={values.content}
-              onChange={onChangeValues}
-            ></textarea>
-            <button type='submit'>저장</button>
+      <PostHeader onSubmit={onSubmit} />
+      <Main>
+        <section className='create-post'>
+          <form className='form' onSubmit={onSubmit}>
+            <div className='form-item'>
+              <input
+                name='title'
+                placeholder='제목'
+                value={values.title}
+                onChange={onChangeValues}
+              ></input>
+            </div>
+            <div className='form-item'>
+              <input
+                name='summary'
+                placeholder='1줄 요약'
+                value={values.summary}
+                onChange={onChangeValues}
+              ></input>
+            </div>
+            <div className='form-item'>
+              <textarea
+                name='content'
+                value={values.content}
+                onChange={onChangeValues}
+              ></textarea>
+            </div>
           </form>
         </section>
-      </main>
+      </Main>
     </div>
   );
 };

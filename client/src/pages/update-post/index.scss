@@ -1,20 +1,33 @@
+@import '../../scss';
+
 .update-post {
   display: flex;
   align-items: center;
   justify-content: center;
   margin-top: 60px;
-  .form-section {
-    width: 1120px;
-    .update-form {
-      display: flex;
-      flex-direction: column;
-      > input {
-        margin-bottom: 20px;
-      }
-      > textarea {
-        margin-bottom: 20px;
-        height: 100px;
-      }
+  .form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    input {
+      all: unset;
+      background-color: $white;
+      width: 800px;
+      height: 50px;
+      border-bottom: 1px solid $white-300;
+      margin-bottom: 20px;
+      padding: 0px 10px;
+    }
+    textarea {
+      all: unset;
+      background-color: $white;
+      width: 800px;
+      height: 500px;
+      border-bottom: 1px solid $white-300;
+      padding: 20px 10px;
+      line-height: 1.8;
     }
   }
 }

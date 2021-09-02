@@ -43,10 +43,8 @@ function* createPostRequest({ payload }) {
   try {
     const { user } = yield select((state) => state.auth);
     const { id } = user;
-    const { title, content } = payload;
     const { data } = yield axios.post('/post', {
-      title,
-      content,
+      ...payload,
       id,
     });
     const history = yield getContext('history');
@@ -68,10 +66,11 @@ function* createPostRequest({ payload }) {
 function* updatePostRequest({ payload }) {
   try {
     const { user } = yield select((state) => state.auth);
-    const { title, content, id } = payload;
+    const { title, content, summary, id } = payload;
     yield axios.patch(`/post/${id}`, {
       title,
       content,
+      summary,
       author: user.id,
     });
     const history = yield getContext('history');

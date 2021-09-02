@@ -1,14 +1,15 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useHistory } from 'react-router-dom';
-import { Header } from '../../compoentns';
+import { Header, Main } from '../../compoentns';
 import { actions } from '../../modules/store';
+import { formatDistance } from 'date-fns';
 import './index.scss';
 
 const Post = () => {
   const { user } = useSelector((state) => state.auth);
   const { currentPost } = useSelector((state) => state.board);
-  const { title, userId, content, created_at } = currentPost;
+  const { title, userId, content, createdAt, summary } = currentPost;
   const dispatch = useDispatch();
   const history = useHistory();
   const params = useParams();
@@ -33,21 +34,28 @@ const Post = () => {
 
   return (
     <div>
-      <Header></Header>
-      <section className='post'>
-        {user.userId === userId && (
-          <div>
-            <button onClick={onClickUpdateButton}>수정</button>
-            <button onClick={onClickDeleteButton}>삭제</button>
-          </div>
-        )}
-        <h1 className='title'>{title}</h1>
-        <div className='title-desc'>
-          <h5>{userId}</h5>
-          <h5>{created_at}</h5>
-        </div>
-        <main className='content'>{content}</main>
-      </section>
+      <Header />
+      <Main>
+        <section className='post'>
+          <section className='post-content'>
+            <h1 className='title'>{title}</h1>
+            <p className='summary'>{summary}</p>
+            <div className='title-desc'>
+              <span>{`by ${userId}`}</span>
+              <span>
+                {`${formatDistance(new Date(createdAt), new Date())} ago`}
+              </span>
+            </div>
+            <main className='content'>{content}</main>
+          </section>
+          {user.userId === userId && (
+            <ul className='nav-buttons'>
+              <li onClick={onClickUpdateButton}>수정</li>
+              <li onClick={onClickDeleteButton}>삭제</li>
+            </ul>
+          )}
+        </section>
+      </Main>
     </div>
   );
 };

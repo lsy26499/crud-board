@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { Header } from '../../compoentns';
+import { Header, Main } from '../../compoentns';
 import { actions } from '../../modules/store';
+import { formatDistance } from 'date-fns';
 import './index.scss';
 
 const Home = () => {
@@ -21,21 +22,30 @@ const Home = () => {
   return (
     <div className='home'>
       <Header />
-      <main className='home-container'>
-        <section className='article-container'>
+      <Main>
+        <ul className='article-container'>
           {posts.map((post) => (
-            <article
+            <li
               className='article-card'
               key={post.id}
               onClick={() => onClickPost(post.id)}
             >
               <h3 className='article-title'>{post.title}</h3>
-              <h4 className='article-username'>{post.userId}</h4>
-              <span className='article-created-at'>{post.created_at}</span>
-            </article>
+              <p className='article-summary'>{post.summary}</p>
+              <div className='article-desc'>
+                <span className='article-username'>{`by ${post.userId}`}</span>
+                <span className='article-created-at'>
+                  {`${formatDistance(
+                    new Date(post.createdAt),
+                    new Date()
+                  )} ago`}
+                </span>
+                {/* <span className='article-end-date'>{post.endDate}</span> */}
+              </div>
+            </li>
           ))}
-        </section>
-      </main>
+        </ul>
+      </Main>
     </div>
   );
 };

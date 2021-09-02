@@ -1,14 +1,16 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Header } from '../../compoentns';
+import { Main, PostHeader } from '../../compoentns';
 import { actions } from '../../modules/store';
+import './index.scss';
 
 const UpdatePost = () => {
   const { currentPost } = useSelector((state) => state.board);
-  const { id, title, content } = currentPost;
+  const { id, title, content, summary } = currentPost;
   const [values, setValues] = useState({
     title,
     content,
+    summary,
   });
   const dispatch = useDispatch();
 
@@ -25,19 +27,31 @@ const UpdatePost = () => {
       return;
     }
     dispatch(
-      actions.updatePost({ id, title: values.title, content: values.content })
+      actions.updatePost({
+        id,
+        title: values.title,
+        content: values.content,
+        summary: values.summary,
+      })
     );
   };
 
   return (
     <div>
-      <Header></Header>
-      <main className='update-post'>
-        <section className='form-section'>
-          <form className='update-form' onSubmit={onSubmit}>
+      <PostHeader onSubmit={onSubmit} />
+      <Main>
+        <section className='update-post'>
+          <form className='form' onSubmit={onSubmit}>
             <input
               name='title'
               value={values.title}
+              placeholder='제목'
+              onChange={onChangeValues}
+            ></input>
+            <input
+              name='summary'
+              value={values.summary}
+              placeholder='1줄 요약'
               onChange={onChangeValues}
             ></input>
             <textarea
@@ -45,10 +59,9 @@ const UpdatePost = () => {
               value={values.content}
               onChange={onChangeValues}
             ></textarea>
-            <button type='submit'>저장</button>
           </form>
         </section>
-      </main>
+      </Main>
     </div>
   );
 };

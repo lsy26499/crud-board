@@ -1,0 +1,12 @@
+@import '../../scss';
+
+.main {
+  display: flex;
+  justify-content: center;
+  background-color: $white-200;
+  min-height: calc(100vh - 70px);
+  .main-container {
+    width: 900px;
+    padding: 30px;
+  }
+}

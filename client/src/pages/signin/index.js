@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Header } from '../../compoentns';
+import { Header, Main } from '../../compoentns';
 import { actions } from '../../modules/store';
 import { useDispatch } from 'react-redux';
+import './index.scss';
 
 const SignIn = () => {
   const [userId, setUserId] = useState('');
@@ -32,31 +33,40 @@ const SignIn = () => {
   return (
     <div>
       <Header />
-      <main>
-        <h1>로그인</h1>
-        <form onSubmit={onSubmit}>
-          <input
-            placeholder='아이디'
-            name='userId'
-            value={userId}
-            onChange={onChangeUserId}
-          ></input>
-          <input
-            placeholder='비밀번호'
-            type='password'
-            name='password'
-            value={password}
-            onChange={onChangePassword}
-          ></input>
-          <button type='submit'>로그인</button>
-        </form>
-        <nav>
-          <div onClick={() => history.push('/find-id')}>아이디 찾기</div>
-          <div onClick={() => history.push('/find-password')}>
-            비밀번호 찾기
-          </div>
-        </nav>
-      </main>
+      <Main>
+        <div className='login-container'>
+          <h1 className='title'>로그인</h1>
+          <form className='form' onSubmit={onSubmit}>
+            <div className='form-item'>
+              <label htmlFor='userId'>아이디</label>
+              <input
+                placeholder='아이디'
+                name='userId'
+                value={userId}
+                onChange={onChangeUserId}
+              ></input>
+            </div>
+            <div className='form-item'>
+              <label htmlFor='userId'>비밀번호</label>
+              <input
+                placeholder='비밀번호'
+                type='password'
+                name='password'
+                value={password}
+                onChange={onChangePassword}
+              ></input>
+            </div>
+            <button type='submit'>로그인</button>
+          </form>
+          <nav>
+            <span onClick={() => history.push('/find-id')}>아이디 찾기</span>
+            <span className='bar'> | </span>
+            <span onClick={() => history.push('/find-password')}>
+              비밀번호 찾기
+            </span>
+          </nav>
+        </div>
+      </Main>
     </div>
   );
 };
