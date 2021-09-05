@@ -4,30 +4,71 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 60px;
+  margin-top: 40px;
   .form {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     width: 100%;
-    input {
-      all: unset;
-      background-color: $white;
-      width: 800px;
-      height: 50px;
-      border-bottom: 1px solid $white-300;
-      margin-bottom: 20px;
-      padding: 0px 10px;
-    }
-    textarea {
-      all: unset;
-      background-color: $white;
-      width: 800px;
-      height: 500px;
-      border-bottom: 1px solid $white-300;
-      padding: 20px 10px;
-      line-height: 1.8;
+    .form-item {
+      &.file {
+        input[type='file'] {
+          height: 30px;
+          padding: 15px 10px;
+        }
+        .images {
+          display: flex;
+          flex-direction: row;
+          column-gap: 10px;
+          background-color: $white;
+          padding: 10px 10px;
+          border-bottom: 1px solid $white-300;
+          .image {
+            position: relative;
+            .icon {
+              position: absolute;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              top: -5px;
+              right: -5px;
+              background-color: $white-300;
+              width: 20px;
+              height: 20px;
+              border-radius: 50%;
+              cursor: pointer;
+              &:hover {
+                background-color: $grey-100;
+              }
+            }
+            img {
+              width: 50px;
+              height: 50px;
+              object-fit: cover;
+            }
+          }
+          margin-bottom: 20px;
+        }
+      }
+      input {
+        all: unset;
+        background-color: $white;
+        width: 800px;
+        height: 50px;
+        border-bottom: 1px solid $white-300;
+        margin-bottom: 20px;
+        padding: 0px 10px;
+      }
+      textarea {
+        all: unset;
+        background-color: $white;
+        width: 800px;
+        height: 500px;
+        border-bottom: 1px solid $white-300;
+        padding: 20px 10px;
+        line-height: 1.8;
+      }
     }
   }
 }
