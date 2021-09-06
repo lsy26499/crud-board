@@ -3,9 +3,14 @@ const models = require('../models');
 module.exports = {
   createPost: async (req, res) => {
     try {
-      const { body, decoded } = req;
-      const { title, content, summary } = body;
+      console.log(req);
+      const { body, decoded, file } = req;
+      const { post } = body;
+      const parsedPost = JSON.parse(post);
+      const { title, content, summary } = parsedPost;
       const { userId } = decoded;
+      const imageUrl = file?.location ? file?.location : null;
+
       if (title.trim() === '') {
         res.status(400).send('제목을 입력해주세요');
         return;
@@ -22,6 +27,7 @@ module.exports = {
         title,
         content,
         summary,
+        imageUrl,
       });
       res.status(200).send({ id: data.insertId });
     } catch (error) {
