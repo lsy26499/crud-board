@@ -40,9 +40,20 @@ function* getPostRequest({ payload }) {
 }
 
 function* createPostRequest({ payload }) {
+  const { title, content, summary, image } = payload;
+  const postObj = {
+    title,
+    content,
+    summary,
+  };
+  const formData = new FormData();
+  formData.append('image', image);
+  formData.append('post', JSON.stringify(postObj));
   try {
-    const { data } = yield axios.post('/post', {
-      ...payload,
+    const { data } = yield axios.post('/post', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
     });
     const history = yield getContext('history');
     history.push(`/post/${data.id}`);
@@ -61,12 +72,20 @@ function* createPostRequest({ payload }) {
 }
 
 function* updatePostRequest({ payload }) {
+  const { title, content, summary, image, id } = payload;
+  const postObj = {
+    title,
+    content,
+    summary,
+  };
+  const formData = new FormData();
+  formData.append('image', image);
+  formData.append('post', JSON.stringify(postObj));
   try {
-    const { title, content, summary, id } = payload;
-    yield axios.patch(`/post/${id}`, {
-      title,
-      content,
-      summary,
+    yield axios.patch(`/post/${id}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
     });
     const history = yield getContext('history');
     history.push(`/post/${id}`);

@@ -40,20 +40,18 @@ const CreatePost = () => {
 
   const onSubmit = (e) => {
     e.preventDefault();
+    console.log(values.image);
     if (values.title.trim() === '') {
       alert('제목을 입력해주세요');
       return;
     }
-
-    const formData = new FormData();
-    formData.append('file', values.image);
 
     dispatch(
       actions.createPost({
         title: values.title,
         content: values.content,
         summary: values.summary,
-        image: formData,
+        image: values.image,
       })
     );
   };

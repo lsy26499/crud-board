@@ -58,7 +58,7 @@ module.exports = {
       db.then((conn) => {
         conn
           .query(
-            `UPDATE board SET title='${data.title}', content='${data.content}', summary='${data.summary}' WHERE id=${data.id}`
+            `UPDATE board SET title='${data.title}', content='${data.content}', summary='${data.summary}', imageURL='${data.imageUrl}' WHERE id=${data.id}`
           )
           .then((rows) => {
             res(rows);

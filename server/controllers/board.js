@@ -53,10 +53,13 @@ module.exports = {
   },
   updatePost: async (req, res) => {
     try {
-      const { body, params, decoded } = req;
-      const { title, content, summary } = body;
+      const { body, params, decoded, file } = req;
+      const { post } = body;
+      const parsedPost = JSON.parse(post);
+      const { title, content, summary } = parsedPost;
       const { id } = params;
       const { userId } = decoded;
+      const imageUrl = file?.location ? file?.location : null;
 
       if (title.trim() === '') {
         res.status(400).send('제목을 입력해주세요');
@@ -69,12 +72,12 @@ module.exports = {
         return;
       }
 
-      const [post] = await models.board.findPostById({ id });
-      if (post.userId !== user.id) {
+      const [foundPost] = await models.board.findPostById({ id });
+      if (foundPost.userId !== user.id) {
         res.status(403).send('유효하지 않은 요청');
         return;
       }
-      await models.board.updatePost({ title, content, summary, id });
+      await models.board.updatePost({ title, content, summary, id, imageUrl });
       res.status(200).send('게시글 업데이트 성공');
     } catch (error) {
       console.log(error);

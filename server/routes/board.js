@@ -12,7 +12,12 @@ boardRouter.post(
   controllers.board.createPost
 );
 boardRouter.get('/post/:id', controllers.board.getPost);
-boardRouter.patch('/post/:id', verifyJwt, controllers.board.updatePost);
+boardRouter.patch(
+  '/post/:id',
+  verifyJwt,
+  upload.single('image'),
+  controllers.board.updatePost
+);
 boardRouter.delete('/post/:id', verifyJwt, controllers.board.deletePost);
 boardRouter.get('/post-list', controllers.board.getPostList);
 
