@@ -1,40 +1,51 @@
 @import '../../scss';
 
 .home {
-  .article-container {
+  .main-wrapper {
     display: flex;
     flex-direction: column;
-    row-gap: 16px;
-    .article-card {
+    align-items: center;
+    width: 100%;
+    .article-container {
+      display: flex;
+      flex-direction: column;
+      row-gap: 16px;
       width: 100%;
-      height: 100px;
-      padding: 30px 20px;
-      background-color: $white;
-      border-bottom: 1px solid $white-300;
-      cursor: pointer;
-      &:hover {
-        .article-title {
-          text-decoration: underline;
+      .article-card {
+        width: 100%;
+        height: 100px;
+        padding: 30px 20px;
+        background-color: $white;
+        border-bottom: 1px solid $white-300;
+        cursor: pointer;
+        &:hover {
+          .article-title {
+            text-decoration: underline;
+          }
         }
-      }
-      .article-title {
-        font-size: 20px;
-        margin-bottom: 10px;
-      }
-      .article-summary {
-        max-height: 42px;
-        -webkit-line-clamp: 2;
-      }
-      .article-desc {
-        margin-top: 20px;
-        font-size: 12px;
-        color: $grey-100;
-        .article-username {
-          &::after {
-            content: '   |   ';
+        .article-title {
+          font-size: 20px;
+          margin-bottom: 10px;
+        }
+        .article-summary {
+          max-height: 42px;
+          -webkit-line-clamp: 2;
+        }
+        .article-desc {
+          margin-top: 20px;
+          font-size: 12px;
+          color: $grey-100;
+          .article-username {
+            &::after {
+              content: '   |   ';
+            }
           }
         }
       }
+    }
+    .pagination {
+      margin-top: 40px;
+      margin-bottom: 60px;
     }
   }
 }

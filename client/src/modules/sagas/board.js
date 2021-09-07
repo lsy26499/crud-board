@@ -11,10 +11,13 @@ import { axios } from '../../utils';
 import { actions } from '../store';
 
 function* getPostListRequest({ payload }) {
+  const { pagination } = yield select((state) => state.board);
+  const { page, pageSize } = pagination;
   try {
-    const { data } = yield axios.get('/post-list');
-    const { posts } = data;
-    yield put(boardActions.getPostListSuccess({ posts }));
+    const { data } = yield axios.get(`/post-list`, {
+      params: { page, pageSize },
+    });
+    yield put(boardActions.getPostListSuccess({ ...data }));
   } catch (error) {
     console.log(error);
     const {

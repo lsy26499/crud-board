@@ -15,6 +15,12 @@ export const initialState = {
   },
   board: {
     posts: [],
+    pagination: {
+      page: 0,
+      pageSize: 5,
+      totalPages: 1,
+      totalItems: 0,
+    },
     currentPost: {},
   },
 };

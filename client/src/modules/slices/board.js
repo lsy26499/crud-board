@@ -7,10 +7,16 @@ export const boardSlice = createSlice({
   name,
   initialState: { ...initialState.board },
   reducers: {
-    getPostList: (state, action) => {},
+    getPostList: (state, action) => {
+      const { payload } = action;
+      const { page, pageSize } = payload;
+      state.pagination.page = page;
+      state.pagination.pageSize = pageSize;
+    },
     getPostListSuccess: (state, action) => {
       const { payload } = action;
       state.posts = payload.posts;
+      state.pagination = payload.pagination;
     },
     getPost: (state, action) => {},
     getPostSuccess: (state, action) => {
