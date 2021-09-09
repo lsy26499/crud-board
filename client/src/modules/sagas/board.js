@@ -43,14 +43,16 @@ function* getPostRequest({ payload }) {
 }
 
 function* createPostRequest({ payload }) {
-  const { title, content, summary, image } = payload;
+  const { title, content, summary, images } = payload;
   const postObj = {
     title,
     content,
     summary,
   };
   const formData = new FormData();
-  formData.append('image', image);
+  images.forEach((image) => {
+    formData.append('images', image);
+  });
   formData.append('post', JSON.stringify(postObj));
   try {
     const { data } = yield axios.post('/post', formData, {
@@ -75,14 +77,16 @@ function* createPostRequest({ payload }) {
 }
 
 function* updatePostRequest({ payload }) {
-  const { title, content, summary, image, id } = payload;
+  const { title, content, summary, images, id } = payload;
   const postObj = {
     title,
     content,
     summary,
   };
   const formData = new FormData();
-  formData.append('image', image);
+  images.forEach((image) => {
+    formData.append('images', image);
+  });
   formData.append('post', JSON.stringify(postObj));
   try {
     yield axios.patch(`/post/${id}`, formData, {

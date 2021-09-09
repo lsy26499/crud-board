@@ -9,7 +9,7 @@ import './index.scss';
 const Post = () => {
   const { user } = useSelector((state) => state.auth);
   const { currentPost } = useSelector((state) => state.board);
-  const { title, userId, content, createdAt, summary, imageURL } = currentPost;
+  const { title, userId, content, createdAt, summary, images } = currentPost;
   const dispatch = useDispatch();
   const history = useHistory();
   const params = useParams();
@@ -55,11 +55,8 @@ const Post = () => {
               )}
             </div>
             <main className='content'>
-              {imageURL && (
-                <div className='image'>
-                  <img src={imageURL} />
-                </div>
-              )}
+              {images.length > 0 &&
+                images.map((image, i) => <img src={image.url} key={i} />)}
               <p className='paragraph'>{content}</p>
             </main>
           </section>

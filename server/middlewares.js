@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const multer = require('multer');
 const multerS3 = require('multer-s3');
 const aws = require('aws-sdk');
+const models = require('./models');
 aws.config.loadFromPath(__dirname + '/config/s3.json');
 
 const s3 = new aws.S3();
@@ -38,4 +39,38 @@ module.exports = {
     }
   },
   upload,
+  s3DeleteImage: async (req, res, next) => {
+    try {
+      const { params } = req;
+      const { id } = params;
+      const images = await models.board.getImages({ boardId: id });
+      if (images.length === 0) {
+        next();
+        return;
+      }
+      await models.board.deleteImages({ boardId: id });
+      const keys = images.map((image) => ({ Key: image.name }));
+      console.log(keys);
+      s3.deleteObjects(
+        {
+          Bucket: 'crudprojectimage',
+          Delete: {
+            Objects: [...keys],
+          },
+        },
+        function (err, data) {
+          if (err) {
+            console.log(err);
+            res.status(500).send('서버 에러');
+          } else {
+            console.log('성공');
+            next();
+          }
+        }
+      );
+    } catch (error) {
+      console.log(error);
+      res.status(500).send('서버 에러');
+    }
+  },
 };

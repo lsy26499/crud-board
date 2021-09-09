@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Main, PostHeader } from '../../compoentns';
 import { actions } from '../../modules/store';
@@ -8,14 +8,15 @@ import './index.scss';
 
 const UpdatePost = () => {
   const { currentPost } = useSelector((state) => state.board);
-  const { id, title, content, summary, imageURL: image } = currentPost;
+  const { id, title, content, summary, images: postImages } = currentPost;
+  const imageUrls = postImages.map((image) => image.url);
+
   const [values, setValues] = useState({
     title,
     content,
     summary,
-    image,
   });
-  const [imageURL, setImageURL] = useState(image);
+  const [images, setImages] = useState([]);
   const imageInputRef = useRef();
   const dispatch = useDispatch();
 
@@ -26,18 +27,25 @@ const UpdatePost = () => {
   };
 
   const onChangeImage = (e) => {
+    if (images.length > 10) {
+      alert('이미지는 최대 10개까지 업로드 가능합니다');
+    }
+
     const files = e.target.files;
-    if (files[0]) {
-      setValues({ ...values, image: files[0] });
-      const url = URL.createObjectURL(files[0]);
-      setImageURL(url);
+    if (files.length > 0) {
+      let selectedFiles = [];
+      for (let file of files) {
+        const url = URL.createObjectURL(file);
+        selectedFiles.push({ file, url });
+      }
+      setImages([...images, ...selectedFiles]);
     }
   };
 
-  const onRemoveImage = () => {
+  const onRemoveImage = (i) => {
     imageInputRef.current.value = '';
-    setImageURL(null);
-    setValues({ ...values, image: null });
+    const newImages = images.filter((url, index) => i !== index);
+    setImages(newImages);
   };
 
   const onSubmit = (e) => {
@@ -46,16 +54,55 @@ const UpdatePost = () => {
       alert('제목을 입력해주세요');
       return;
     }
+    const files = images.map((image) => image.file);
     dispatch(
       actions.updatePost({
         id,
         title: values.title,
         content: values.content,
         summary: values.summary,
-        image: values.image,
+        images: files,
       })
     );
   };
+
+  const getImageBlobUrl = (url) => {
+    return new Promise((res, rej) => {
+      fetch(url)
+        .then((r) => r.blob())
+        .then((blob) => res({ blob, url }))
+        .catch((err) => {
+          console.log(err);
+          rej(err);
+        });
+    });
+  };
+
+  const getFileUrlFromBlob = (item) => {
+    const { blob, url } = item;
+    const fileName =
+      postImages.find((image) => image.url === url).name ||
+      `${new Date().getTime()}.jpg`;
+    const ext = fileName.split('.')[1];
+    const metadata = { type: `image/${ext}` };
+    return new File([blob], fileName, metadata);
+  };
+
+  useEffect(() => {
+    const promises = imageUrls.map((url) => getImageBlobUrl(url));
+    Promise.all(promises)
+      .then((data) => {
+        const files = data.map((item) => {
+          const file = getFileUrlFromBlob(item);
+          return {
+            file: file,
+            url: URL.createObjectURL(file),
+          };
+        });
+        setImages(files);
+      })
+      .catch((err) => console.log(err));
+  }, []);
 
   return (
     <div>
@@ -81,18 +128,24 @@ const UpdatePost = () => {
                 name='file'
                 type='file'
                 accept='image/*'
-                // placeholder='1줄 요약'
+                multiple='multiple'
                 onChange={onChangeImage}
               ></input>
               <div className='file-upload-button'></div>
-              {imageURL && (
+              {images.length > 0 && (
                 <ul className='images'>
-                  <li className='image' onClick={onRemoveImage}>
-                    <img src={imageURL} />
-                    <div className='icon'>
-                      <FontAwesomeIcon icon={faTimes} size='sm' />
-                    </div>
-                  </li>
+                  {images.map((image, i) => (
+                    <li
+                      className='image'
+                      key={i}
+                      onClick={() => onRemoveImage(i)}
+                    >
+                      <img src={image.url} />
+                      <div className='icon'>
+                        <FontAwesomeIcon icon={faTimes} size='sm' />
+                      </div>
+                    </li>
+                  ))}
                 </ul>
               )}
             </div>

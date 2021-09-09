@@ -3,33 +3,37 @@ const models = require('../models');
 module.exports = {
   createPost: async (req, res) => {
     try {
-      console.log(req);
-      const { body, decoded, file } = req;
+      const { body, decoded, files } = req;
       const { post } = body;
       const parsedPost = JSON.parse(post);
       const { title, content, summary } = parsedPost;
       const { userId } = decoded;
-      const imageUrl = file?.location ? file?.location : null;
-
       if (title.trim() === '') {
         res.status(400).send('제목을 입력해주세요');
         return;
       }
-
       const [user] = await models.user.findByUserId({ userId });
       if (!user) {
         res.status(404).send('존재하지 않는 유저');
         return;
       }
-
       const data = await models.board.createPost({
         id: user.id,
         title,
         content,
         summary,
-        imageUrl,
       });
-      res.status(200).send({ id: data.insertId });
+      const boardId = data.insertId;
+
+      if (files.length > 0) {
+        const images = files.map((file) => ({
+          url: file.location,
+          name: file.key,
+        }));
+        await models.board.insertImages({ images, boardId });
+      }
+
+      res.status(200).send({ id: boardId });
     } catch (error) {
       console.log(error);
       res.status(500).send('서버 에러');
@@ -40,8 +44,9 @@ module.exports = {
       const { params } = req;
       const { id } = params;
       const [post] = await models.board.findFullPostDataById({ id });
+      const images = await models.board.getImages({ boardId: id });
       if (post) {
-        res.status(200).send({ post });
+        res.status(200).send({ post: { ...post, images } });
         return;
       } else {
         res.status(404).send('존재하지 않는 게시물');
@@ -53,13 +58,12 @@ module.exports = {
   },
   updatePost: async (req, res) => {
     try {
-      const { body, params, decoded, file } = req;
+      const { body, params, decoded, files } = req;
       const { post } = body;
       const parsedPost = JSON.parse(post);
       const { title, content, summary } = parsedPost;
       const { id } = params;
       const { userId } = decoded;
-      const imageUrl = file?.location ? file?.location : null;
 
       if (title.trim() === '') {
         res.status(400).send('제목을 입력해주세요');
@@ -77,7 +81,14 @@ module.exports = {
         res.status(403).send('유효하지 않은 요청');
         return;
       }
-      await models.board.updatePost({ title, content, summary, id, imageUrl });
+      await models.board.updatePost({ title, content, summary, id });
+      if (files.length > 0) {
+        const images = files.map((file) => ({
+          url: file.location,
+          name: file.key,
+        }));
+        await models.board.insertImages({ images, boardId: id });
+      }
       res.status(200).send('게시글 업데이트 성공');
     } catch (error) {
       console.log(error);
@@ -111,8 +122,27 @@ module.exports = {
   },
   getPostList: async (req, res) => {
     try {
-      const posts = await models.board.getPostList();
-      res.status(200).send({ posts });
+      const { query } = req;
+      const { page, pageSize } = query;
+      const [totalItemNumber] = await models.board.getPostsCount();
+      const totalItems = totalItemNumber['COUNT(*)'];
+      const totalPages = Math.ceil(totalItems / pageSize);
+
+      if (page < 0 || page > totalPages) {
+        res.status(400).send('잘못된 페이지 정보');
+        return;
+      }
+      const posts = await models.board.getPostList({
+        start: page * pageSize,
+        pageSize,
+      });
+      const pagination = {
+        page: Number(page),
+        pageSize: Number(pageSize),
+        totalItems,
+        totalPages,
+      };
+      res.status(200).send({ posts, pagination });
     } catch (error) {
       console.log(error);
       res.status(500).send('서버 에러');
