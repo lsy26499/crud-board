@@ -15,8 +15,9 @@ boardRouter.get('/post/:id', controllers.board.getPost);
 boardRouter.patch(
   '/post/:id',
   verifyJwt,
-  s3DeleteImage,
+  // s3DeleteImage,
   upload.array('images', 5),
+  // deleteImage,
   controllers.board.updatePost
 );
 boardRouter.delete(

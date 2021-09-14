@@ -38,13 +38,18 @@ const UpdatePost = () => {
         const url = URL.createObjectURL(file);
         selectedFiles.push({ file, url });
       }
+      console.log('change');
+      console.log([...images, ...selectedFiles]);
       setImages([...images, ...selectedFiles]);
     }
   };
 
   const onRemoveImage = (i) => {
     imageInputRef.current.value = '';
+    console.log(i);
     const newImages = images.filter((url, index) => i !== index);
+    console.log('remove');
+    console.log(newImages);
     setImages(newImages);
   };
 
@@ -54,7 +59,9 @@ const UpdatePost = () => {
       alert('제목을 입력해주세요');
       return;
     }
-    const files = images.map((image) => image.file);
+    const files = images.map((image) => image.file || image.url);
+    console.log('submit');
+    console.log(files);
     dispatch(
       actions.updatePost({
         id,
@@ -95,8 +102,8 @@ const UpdatePost = () => {
         const files = data.map((item) => {
           const file = getFileUrlFromBlob(item);
           return {
-            file: file,
-            url: URL.createObjectURL(file),
+            // file: file,
+            url: item.url,
           };
         });
         setImages(files);

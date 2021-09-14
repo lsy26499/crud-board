@@ -146,11 +146,27 @@ module.exports = {
       });
     });
   },
-  getImages: function (data) {
+  getImagesUrlAndName: function (data) {
     return new Promise((res, rej) => {
       db.then((conn) => {
         conn
           .query(`SELECT name, url FROM images WHERE boardId=${data.boardId}`)
+          .then((rows) => {
+            res(rows);
+          })
+          .catch((err) => {
+            rej(err);
+          });
+      }).catch((err) => {
+        rej(err);
+      });
+    });
+  },
+  getImages: function (data) {
+    return new Promise((res, rej) => {
+      db.then((conn) => {
+        conn
+          .query(`SELECT * FROM images WHERE boardId=${data.boardId}`)
           .then((rows) => {
             res(rows);
           })
@@ -167,6 +183,30 @@ module.exports = {
       db.then((conn) => {
         conn
           .query(`DELETE FROM images WHERE boardId=${data.boardId}`)
+          .then((rows) => {
+            res(rows);
+          })
+          .catch((err) => {
+            rej(err);
+          });
+      }).catch((err) => {
+        rej(err);
+      });
+    });
+  },
+  deleteImagesById: function (data) {
+    const query = data.images
+      .map(
+        (image, i) =>
+          `(${image.id}, '${image.name}')${
+            data.images.length - 1 === i ? '' : ','
+          }`
+      )
+      .join('');
+    return new Promise((res, rej) => {
+      db.then((conn) => {
+        conn
+          .query(`DELETE FROM images WHERE (id, name) IN (${query})`)
           .then((rows) => {
             res(rows);
           })

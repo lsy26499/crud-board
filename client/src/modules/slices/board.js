@@ -18,10 +18,13 @@ export const boardSlice = createSlice({
       state.posts = payload.posts;
       state.pagination = payload.pagination;
     },
-    getPost: (state, action) => {},
+    getPost: (state, action) => {
+      state.currentPost.loading = true;
+    },
     getPostSuccess: (state, action) => {
       const { payload } = action;
       state.currentPost = payload.post;
+      state.currentPost.loading = false;
     },
     createPost: (state, action) => {},
     updatePost: (state, action) => {},

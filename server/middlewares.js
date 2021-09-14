@@ -9,7 +9,7 @@ const s3 = new aws.S3();
 const upload = multer({
   storage: multerS3({
     s3: s3,
-    bucket: 'crudprojectimage',
+    bucket: 'crudprojectimage/development',
     acl: 'public-read',
     key: function (req, file, cb) {
       cb(null, Date.now() + '.' + file.originalname.split('.').pop());
@@ -50,7 +50,6 @@ module.exports = {
       }
       await models.board.deleteImages({ boardId: id });
       const keys = images.map((image) => ({ Key: image.name }));
-      console.log(keys);
       s3.deleteObjects(
         {
           Bucket: 'crudprojectimage',
@@ -73,4 +72,5 @@ module.exports = {
       res.status(500).send('서버 에러');
     }
   },
+  s3,
 };

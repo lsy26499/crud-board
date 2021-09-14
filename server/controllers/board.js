@@ -1,4 +1,5 @@
 const models = require('../models');
+const { s3 } = require('../middlewares');
 
 module.exports = {
   createPost: async (req, res) => {
@@ -44,7 +45,7 @@ module.exports = {
       const { params } = req;
       const { id } = params;
       const [post] = await models.board.findFullPostDataById({ id });
-      const images = await models.board.getImages({ boardId: id });
+      const images = await models.board.getImagesUrlAndName({ boardId: id });
       if (post) {
         res.status(200).send({ post: { ...post, images } });
         return;
@@ -59,7 +60,7 @@ module.exports = {
   updatePost: async (req, res) => {
     try {
       const { body, params, decoded, files } = req;
-      const { post } = body;
+      const { post, images } = body;
       const parsedPost = JSON.parse(post);
       const { title, content, summary } = parsedPost;
       const { id } = params;
@@ -82,6 +83,43 @@ module.exports = {
         return;
       }
       await models.board.updatePost({ title, content, summary, id });
+
+      // 이미 존재하는 이미지 수정 처리
+      const postedImages = !images
+        ? []
+        : typeof images === 'string'
+        ? [images]
+        : images;
+      const imageNames = postedImages.map((image) => {
+        const splittedUrl = image.split('/');
+        return splittedUrl[splittedUrl.length - 1];
+      });
+      const savedImages = await models.board.getImages({ boardId: id });
+      const deletedImages = savedImages.filter(
+        (image) => !imageNames.includes(image.name)
+      );
+      if (deletedImages.length) {
+        const keys = deletedImages.map((image) => ({ Key: image.name }));
+        await models.board.deleteImagesById({ images: deletedImages });
+        s3.deleteObjects(
+          {
+            Bucket: 'crudprojectimage',
+            Delete: {
+              Objects: [...keys],
+            },
+          },
+          function (err, data) {
+            if (err) {
+              console.log(err, err.stack);
+              throw new Error(err.stack);
+            } else {
+              console.log(data);
+            }
+          }
+        );
+      }
+
+      // 새 이미지 업로드
       if (files.length > 0) {
         const images = files.map((file) => ({
           url: file.location,
@@ -89,6 +127,7 @@ module.exports = {
         }));
         await models.board.insertImages({ images, boardId: id });
       }
+
       res.status(200).send('게시글 업데이트 성공');
     } catch (error) {
       console.log(error);

@@ -21,6 +21,8 @@ export const initialState = {
       totalPages: 1,
       totalItems: 0,
     },
-    currentPost: {},
+    currentPost: {
+      loading: false,
+    },
   },
 };
