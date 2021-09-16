@@ -110,10 +110,7 @@ module.exports = {
           },
           function (err, data) {
             if (err) {
-              console.log(err, err.stack);
               throw new Error(err.stack);
-            } else {
-              console.log(data);
             }
           }
         );

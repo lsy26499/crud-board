@@ -4,6 +4,7 @@ import { Main, PostHeader } from '../../compoentns';
 import { actions } from '../../modules/store';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
+import { checkImageSize } from '../../utils';
 import './index.scss';
 
 const UpdatePost = () => {
@@ -27,29 +28,31 @@ const UpdatePost = () => {
   };
 
   const onChangeImage = (e) => {
-    if (images.length > 10) {
+    const files = e.target.files;
+    let slicedFiles = [];
+    if (images.length + files.length > 10) {
       alert('이미지는 최대 10개까지 업로드 가능합니다');
+      const length = 10 - images.length;
+      slicedFiles = [...files].slice(0, length);
+    } else {
+      slicedFiles = [...files];
     }
 
-    const files = e.target.files;
-    if (files.length > 0) {
+    if (slicedFiles.length > 0) {
       let selectedFiles = [];
-      for (let file of files) {
+      for (let file of slicedFiles) {
         const url = URL.createObjectURL(file);
         selectedFiles.push({ file, url });
       }
-      console.log('change');
-      console.log([...images, ...selectedFiles]);
-      setImages([...images, ...selectedFiles]);
+      const checkedImages = checkImageSize(selectedFiles);
+      setImages([...images, ...checkedImages]);
     }
+    imageInputRef.current.value = '';
   };
 
   const onRemoveImage = (i) => {
     imageInputRef.current.value = '';
-    console.log(i);
     const newImages = images.filter((url, index) => i !== index);
-    console.log('remove');
-    console.log(newImages);
     setImages(newImages);
   };
 
@@ -60,8 +63,6 @@ const UpdatePost = () => {
       return;
     }
     const files = images.map((image) => image.file || image.url);
-    console.log('submit');
-    console.log(files);
     dispatch(
       actions.updatePost({
         id,

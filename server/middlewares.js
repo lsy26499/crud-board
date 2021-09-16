@@ -15,6 +15,7 @@ const upload = multer({
       cb(null, Date.now() + '.' + file.originalname.split('.').pop());
     },
   }),
+  limits: { files: 10, fileSize: 10 * 1024 * 1024 },
 });
 
 module.exports = {
@@ -62,7 +63,6 @@ module.exports = {
             console.log(err);
             res.status(500).send('서버 에러');
           } else {
-            console.log('성공');
             next();
           }
         }
