@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const randomstring = require('randomstring');
 const multer = require('multer');
 const multerS3 = require('multer-s3');
 const aws = require('aws-sdk');
@@ -12,7 +13,15 @@ const upload = multer({
     bucket: 'crudprojectimage/development',
     acl: 'public-read',
     key: function (req, file, cb) {
-      cb(null, Date.now() + '.' + file.originalname.split('.').pop());
+      cb(
+        null,
+        randomstring.generate({
+          length: 12,
+          charset: 'hex',
+        }) +
+          '.' +
+          file.originalname.split('.').pop()
+      );
     },
   }),
   limits: { files: 10, fileSize: 10 * 1024 * 1024 },

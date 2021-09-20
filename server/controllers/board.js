@@ -33,8 +33,9 @@ module.exports = {
         }));
         await models.board.insertImages({ images, boardId });
       }
+      const images = files.length > 0 ? files.map((file) => file.location) : [];
 
-      res.status(200).send({ id: boardId });
+      res.status(200).send({ id: boardId, title, content, summary, images });
     } catch (error) {
       console.log(error);
       res.status(500).send('서버 에러');
@@ -122,10 +123,17 @@ module.exports = {
           url: file.location,
           name: file.key,
         }));
+        console.log(images);
         await models.board.insertImages({ images, boardId: id });
       }
 
-      res.status(200).send('게시글 업데이트 성공');
+      res.status(200).send({
+        id,
+        title,
+        content,
+        summary,
+        images: [...postedImages, ...files.map((file) => file.location)],
+      });
     } catch (error) {
       console.log(error);
       res.status(500).send('서버 에러');

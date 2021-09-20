@@ -1,6 +1,7 @@
 const express = require('express');
 const controllers = require('../controllers');
 const middlewares = require('../middlewares');
+
 const { verifyJwt, upload, s3DeleteImage } = middlewares;
 
 const boardRouter = express.Router();
