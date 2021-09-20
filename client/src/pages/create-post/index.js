@@ -4,7 +4,7 @@ import { Main, PostHeader } from '../../compoentns';
 import { actions } from '../../modules/store';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
-import { checkImageSize } from '../../utils';
+import { checkImageSize, checkIamgeMimeType } from '../../utils';
 import './index.scss';
 
 const CreatePost = () => {
@@ -23,8 +23,9 @@ const CreatePost = () => {
     setValues({ ...values, [name]: value });
   };
 
-  const onChangeImage = (e) => {
+  const onChangeImage = async (e) => {
     const files = e.target.files;
+    await checkIamgeMimeType(files[0]);
     let slicedFiles = [];
     if (images.length + files.length > 10) {
       alert('이미지는 최대 10개까지 업로드 가능합니다');

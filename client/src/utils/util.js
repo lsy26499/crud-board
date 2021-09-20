@@ -1,3 +1,5 @@
+import FileType from 'file-type/browser';
+
 export const validateEmail = (email) => {
   if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
     return true;
@@ -5,7 +7,12 @@ export const validateEmail = (email) => {
   return false;
 };
 
-export const checkImageSize = (images) => {
+export const checkIamgeMimeType = async (file) => {
+  const type = await FileType.fromBlob(file);
+  console.log(type);
+};
+
+export const checkImageSize = async (images) => {
   const limitPerFile = 1024 * 1024 * 10;
 
   const checkedFiles = images.filter(
