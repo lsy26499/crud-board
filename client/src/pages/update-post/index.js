@@ -4,7 +4,7 @@ import { Main, PostHeader } from '../../compoentns';
 import { actions } from '../../modules/store';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
-import { checkImageSize } from '../../utils';
+import { checkImageSize, checkImageMimeType } from '../../utils';
 import './index.scss';
 
 const UpdatePost = () => {
@@ -27,7 +27,7 @@ const UpdatePost = () => {
     setValues({ ...values, [name]: value });
   };
 
-  const onChangeImage = (e) => {
+  const onChangeImage = async (e) => {
     const files = e.target.files;
     let slicedFiles = [];
     if (images.length + files.length > 10) {
@@ -41,8 +41,13 @@ const UpdatePost = () => {
     if (slicedFiles.length > 0) {
       let selectedFiles = [];
       for (let file of slicedFiles) {
-        const url = URL.createObjectURL(file);
-        selectedFiles.push({ file, url });
+        const isImage = await checkImageMimeType(file);
+        if (isImage) {
+          const url = URL.createObjectURL(file);
+          selectedFiles.push({ file, url });
+        } else {
+          alert('이미지 파일만 업로드할 수 있습니다');
+        }
       }
       const checkedImages = checkImageSize(selectedFiles);
       setImages([...images, ...checkedImages]);

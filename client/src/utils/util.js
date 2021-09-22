@@ -7,12 +7,13 @@ export const validateEmail = (email) => {
   return false;
 };
 
-export const checkIamgeMimeType = async (file) => {
+export const checkImageMimeType = async (file) => {
   const type = await FileType.fromBlob(file);
-  console.log(type);
+  const mimeType = type.mime.split('/')[0];
+  return mimeType === 'image';
 };
 
-export const checkImageSize = async (images) => {
+export const checkImageSize = (images) => {
   const limitPerFile = 1024 * 1024 * 10;
 
   const checkedFiles = images.filter(

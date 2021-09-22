@@ -6,21 +6,9 @@ const { verifyJwt, upload, s3DeleteImage } = middlewares;
 
 const boardRouter = express.Router();
 
-boardRouter.post(
-  '/post',
-  verifyJwt,
-  upload.any(),
-  controllers.board.createPost
-);
+boardRouter.post('/post', verifyJwt, upload, controllers.board.createPost);
 boardRouter.get('/post/:id', controllers.board.getPost);
-boardRouter.patch(
-  '/post/:id',
-  verifyJwt,
-  // s3DeleteImage,
-  upload.array('images', 5),
-  // deleteImage,
-  controllers.board.updatePost
-);
+boardRouter.patch('/post/:id', verifyJwt, upload, controllers.board.updatePost);
 boardRouter.delete(
   '/post/:id',
   verifyJwt,

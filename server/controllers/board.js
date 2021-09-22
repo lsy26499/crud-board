@@ -5,37 +5,38 @@ module.exports = {
   createPost: async (req, res) => {
     try {
       const { body, decoded, files } = req;
-      const { post } = body;
-      const parsedPost = JSON.parse(post);
-      const { title, content, summary } = parsedPost;
-      const { userId } = decoded;
-      if (title.trim() === '') {
-        res.status(400).send('제목을 입력해주세요');
-        return;
-      }
-      const [user] = await models.user.findByUserId({ userId });
-      if (!user) {
-        res.status(404).send('존재하지 않는 유저');
-        return;
-      }
-      const data = await models.board.createPost({
-        id: user.id,
-        title,
-        content,
-        summary,
-      });
-      const boardId = data.insertId;
+      console.log(req.files);
+      // const { post } = body;
+      // const parsedPost = JSON.parse(post);
+      // const { title, content, summary } = parsedPost;
+      // const { userId } = decoded;
+      // if (title.trim() === '') {
+      //   res.status(400).send('제목을 입력해주세요');
+      //   return;
+      // }
+      // const [user] = await models.user.findByUserId({ userId });
+      // if (!user) {
+      //   res.status(404).send('존재하지 않는 유저');
+      //   return;
+      // }
+      // const data = await models.board.createPost({
+      //   id: user.id,
+      //   title,
+      //   content,
+      //   summary,
+      // });
+      // const boardId = data.insertId;
 
-      if (files.length > 0) {
-        const images = files.map((file) => ({
-          url: file.location,
-          name: file.key,
-        }));
-        await models.board.insertImages({ images, boardId });
-      }
-      const images = files.length > 0 ? files.map((file) => file.location) : [];
+      // if (files.length > 0) {
+      //   const images = files.map((file) => ({
+      //     url: file.location,
+      //     name: file.key,
+      //   }));
+      //   await models.board.insertImages({ images, boardId });
+      // }
+      // const images = files.length > 0 ? files.map((file) => file.location) : [];
 
-      res.status(200).send({ id: boardId, title, content, summary, images });
+      // res.status(200).send({ id: boardId, title, content, summary, images });
     } catch (error) {
       console.log(error);
       res.status(500).send('서버 에러');

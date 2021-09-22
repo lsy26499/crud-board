@@ -4,7 +4,7 @@ import { Main, PostHeader } from '../../compoentns';
 import { actions } from '../../modules/store';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
-import { checkImageSize, checkIamgeMimeType } from '../../utils';
+import { checkImageSize, checkImageMimeType } from '../../utils';
 import './index.scss';
 
 const CreatePost = () => {
@@ -25,7 +25,7 @@ const CreatePost = () => {
 
   const onChangeImage = async (e) => {
     const files = e.target.files;
-    await checkIamgeMimeType(files[0]);
+
     let slicedFiles = [];
     if (images.length + files.length > 10) {
       alert('이미지는 최대 10개까지 업로드 가능합니다');
@@ -38,8 +38,14 @@ const CreatePost = () => {
     if (slicedFiles.length > 0) {
       let selectedFiles = [];
       for (let file of slicedFiles) {
-        const url = URL.createObjectURL(file);
-        selectedFiles.push({ file, url });
+        // const isImage = await checkImageMimeType(file);
+        const isImage = true;
+        if (isImage) {
+          const url = URL.createObjectURL(file);
+          selectedFiles.push({ file, url });
+        } else {
+          alert('이미지 파일만 업로드할 수 있습니다');
+        }
       }
       const checkedImages = checkImageSize(selectedFiles);
       setImages([...images, ...checkedImages]);
