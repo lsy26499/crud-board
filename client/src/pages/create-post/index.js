@@ -38,8 +38,8 @@ const CreatePost = () => {
     if (slicedFiles.length > 0) {
       let selectedFiles = [];
       for (let file of slicedFiles) {
-        // const isImage = await checkImageMimeType(file);
-        const isImage = true;
+        const isImage = await checkImageMimeType(file);
+        // const isImage = true;
         if (isImage) {
           const url = URL.createObjectURL(file);
           selectedFiles.push({ file, url });
