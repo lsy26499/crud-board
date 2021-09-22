@@ -1,5 +1,4 @@
 const FileType = require('file-type');
-const path = require('path');
 
 module.exports = {
   validateEmail: (email) => {
@@ -8,18 +7,36 @@ module.exports = {
     }
     return false;
   },
-  checkFileType: async (req, file, callback) => {
-    //! 업로드 이전에 req에 접근해서 파일 빼온 뒤 validation 해야 함
-    console.log(req);
-    // const { body } = req;
-    // console.log(JSON.stringify(body));
-    // const type = await FileType.fromFile(file);
-    // const mimeType = type.mime.split('/')[0];
-    // const isImage = mimeType === 'image';
-    // if (isImage) {
-    //   callback(null, true);
-    // } else {
-    //   callback('이미지만 업로드 가능');
-    // }
+  checkFileLength: (files) => {
+    if (files.length > 10) {
+      throw new Error('파일 개수 초과');
+    } else {
+      return files;
+    }
+  },
+  checkFileType: async (files) => {
+    let checkedFiles = [];
+    for (let file of files) {
+      const type = await FileType.fromFile(file.path);
+      const mimeType = type.mime.split('/')[0];
+      const isImage = mimeType === 'image';
+      if (isImage) {
+        checkedFiles.push(file);
+      }
+    }
+    if (files.length > checkedFiles.length) {
+      throw new Error('이미지 파일만 업로드 가능');
+    } else {
+      return checkedFiles;
+    }
+  },
+  checkFileSize: (files) => {
+    const limitPerFile = 1024 * 1024 * 10;
+    const checkedFiles = files.filter((image) => image.size <= limitPerFile);
+    if (checkedFiles.length < files.length) {
+      throw new Error('10MB 초과하는 파일 존재');
+    } else {
+      return files;
+    }
   },
 };

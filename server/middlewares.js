@@ -1,35 +1,14 @@
 const jwt = require('jsonwebtoken');
 const randomstring = require('randomstring');
-const multer = require('multer');
-const multerS3 = require('multer-s3');
 const aws = require('aws-sdk');
+const formidable = require('formidable');
+const fs = require('fs');
+const { Readable } = require('stream');
 const models = require('./models');
-const { checkFileType } = require('./utils');
+const { checkFileType, checkFileSize, checkFileLength } = require('./utils');
 aws.config.loadFromPath(__dirname + '/config/s3.json');
 
 const s3 = new aws.S3();
-const uploadMulter = multer({
-  storage: multerS3({
-    s3: s3,
-    bucket: 'crudprojectimage/development',
-    acl: 'public-read',
-    key: function (req, file, cb) {
-      cb(
-        null,
-        randomstring.generate({
-          length: 12,
-          charset: 'hex',
-        }) +
-          '.' +
-          file.originalname.split('.').pop()
-      );
-    },
-  }),
-  limits: { files: 10, fileSize: 10 * 1024 * 1024 },
-  // fileFilter: checkFileType,
-});
-
-const uploadImages = uploadMulter.array('images', 10);
 
 module.exports = {
   verifyJwt: async (req, res, next) => {
@@ -52,19 +31,88 @@ module.exports = {
       res.status(401).send('유효하지 않은 토큰');
     }
   },
-  upload: (req, res, next) => {
-    uploadImages(req, res, function (err) {
-      if (err) {
-        if (err.code === 'LIMIT_FILE_SIZE') {
-          res.status(500).send('이미지는 10MB까지 업로드 가능합니다');
+  validateFiles: (req, res, next) => {
+    const forms = formidable({ multiples: true });
+    forms.parse(req, async (err, fields, files) => {
+      try {
+        if (err) {
+          res.status(500).send('서버 에러');
+          return;
         }
-        if (err.code === 'LIMIT_FILE_COUNT') {
-          res.status(500).send('이미지는 최대 10개까지 업로드 가능합니다');
+        const { post, images: savedImages } = fields;
+        const { images: uploadedImages } = files;
+        const parsedPost = JSON.parse(post);
+        const body = savedImages
+          ? { ...parsedPost, images: savedImages }
+          : parsedPost;
+        if (uploadedImages) {
+          const images = Array.isArray(uploadedImages)
+            ? uploadedImages
+            : [uploadedImages];
+          const lengthChecked = checkFileLength(images);
+          const sizeChecked = checkFileSize(lengthChecked);
+          const typeChecked = await checkFileType(sizeChecked);
+          req.files = typeChecked;
         }
-      } else {
+        req.body = { ...body };
         next();
+      } catch (error) {
+        console.log(error);
+        if (error.message) {
+          res.status(400).send(error.message);
+        } else {
+          res.status(500).send('서버 에러');
+        }
       }
     });
+  },
+  upload: (req, res, next) => {
+    try {
+      const { files } = req;
+      let uploadedFiles = [];
+      if (files) {
+        for (let file of files) {
+          const readableStream = fs.createReadStream(file.path);
+          const ext = file.type.split('/')[1];
+          const key = `${randomstring.generate({
+            length: 12,
+            charset: 'hex',
+          })}.${ext}`;
+          const params = {
+            Bucket: 'crudprojectimage/development',
+            ACL: 'public-read',
+            Key: key,
+            Body: readableStream,
+          };
+          s3.upload(params, (err, data) => {
+            if (err) {
+              console.log(err);
+              throw new Error(err);
+            } else {
+              const key = data.key.split('/')[1]
+                ? data.key.split('/')[1]
+                : data.key;
+              const uploadedFile = {
+                etag: data.ETag,
+                location: data.Location,
+                key,
+                bucket: data.Bucket,
+              };
+              uploadedFiles.push(uploadedFile);
+              if (uploadedFiles.length === files.length) {
+                req.files = uploadedFiles;
+                next();
+              }
+            }
+          });
+        }
+      } else {
+        req.files = [];
+        next();
+      }
+    } catch (error) {
+      res.status(500).send('서버 에러');
+    }
   },
   s3DeleteImage: async (req, res, next) => {
     try {
