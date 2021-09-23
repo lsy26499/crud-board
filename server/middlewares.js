@@ -3,9 +3,9 @@ const randomstring = require('randomstring');
 const aws = require('aws-sdk');
 const formidable = require('formidable');
 const fs = require('fs');
-const { Readable } = require('stream');
 const models = require('./models');
 const { checkFileType, checkFileSize, checkFileLength } = require('./utils');
+
 aws.config.loadFromPath(__dirname + '/config/s3.json');
 
 const s3 = new aws.S3();
@@ -79,7 +79,7 @@ module.exports = {
             charset: 'hex',
           })}.${ext}`;
           const params = {
-            Bucket: 'crudprojectimage/development',
+            Bucket: 'crudprojectimage/production',
             ACL: 'public-read',
             Key: key,
             Body: readableStream,
