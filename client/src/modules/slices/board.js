@@ -9,9 +9,10 @@ export const boardSlice = createSlice({
   reducers: {
     getPostList: (state, action) => {
       const { payload } = action;
-      const { page, pageSize } = payload;
+      const { page, pageSize, search } = payload;
       state.pagination.page = page;
       state.pagination.pageSize = pageSize;
+      state.search = search;
     },
     getPostListSuccess: (state, action) => {
       const { payload } = action;

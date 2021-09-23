@@ -16,6 +16,23 @@
     .home-button {
       cursor: pointer;
     }
+    .header-search {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      width: 500px;
+      border-bottom: 1px solid black;
+      .search-input {
+        all: unset;
+        width: 450px;
+        height: 36px;
+      }
+      .search-button {
+        cursor: pointer;
+        margin-right: 10px;
+      }
+    }
     .auth-nav-section {
       display: flex;
       flex-direction: row;

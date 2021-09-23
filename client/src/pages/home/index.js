@@ -8,7 +8,7 @@ import { formatDistance } from 'date-fns';
 import './index.scss';
 
 const Home = () => {
-  const { posts, pagination } = useSelector((state) => state.board);
+  const { posts, pagination, search } = useSelector((state) => state.board);
   const { page, pageSize, totalPages } = pagination;
   const dispatch = useDispatch();
   const history = useHistory();
@@ -18,11 +18,11 @@ const Home = () => {
   };
 
   const onChangePagination = (e, page) => {
-    dispatch(actions.getPostList({ page: page - 1, pageSize }));
+    dispatch(actions.getPostList({ page: page - 1, pageSize, search }));
   };
 
   useEffect(() => {
-    dispatch(actions.getPostList({ page, pageSize }));
+    dispatch(actions.getPostList({ page, pageSize, search }));
   }, []);
 
   return (

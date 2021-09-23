@@ -90,11 +90,17 @@ module.exports = {
     });
   },
   getPostList: function (data) {
+    const query =
+      !data.search || data.search === ''
+        ? ''
+        : `WHERE board.title LIKE '%${data.search}%' `;
     return new Promise((res, rej) => {
       db.then((conn) => {
         conn
           .query(
-            `SELECT board.id, user.userId, board.title, board.summary, board.createdAt FROM board LEFT JOIN user ON board.userId=user.id ORDER BY id DESC LIMIT ${data.start},${data.pageSize}`
+            `SELECT board.id, user.userId, board.title, board.summary, board.createdAt FROM board 
+            LEFT JOIN user ON board.userId=user.id ${query}ORDER BY id 
+            DESC LIMIT ${data.start},${data.pageSize}`
           )
           .then((rows) => {
             res(rows);
@@ -107,11 +113,15 @@ module.exports = {
       });
     });
   },
-  getPostsCount: function () {
+  getPostsCount: function (data) {
+    const query =
+      !data.search || data.search === ''
+        ? ''
+        : `WHERE board.title LIKE '%${data.search}%'`;
     return new Promise((res, rej) => {
       db.then((conn) => {
         conn
-          .query(`SELECT COUNT(*) FROM board`)
+          .query(`SELECT COUNT(*) FROM board ${query}`)
           .then((rows) => {
             res(rows);
           })

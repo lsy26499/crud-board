@@ -164,18 +164,15 @@ module.exports = {
   getPostList: async (req, res) => {
     try {
       const { query } = req;
-      const { page, pageSize } = query;
-      const [totalItemNumber] = await models.board.getPostsCount();
+      const { page, pageSize, search } = query;
+      const [totalItemNumber] = await models.board.getPostsCount({ search });
       const totalItems = totalItemNumber['COUNT(*)'];
       const totalPages = Math.ceil(totalItems / pageSize);
 
-      if (page < 0 || page > totalPages) {
-        res.status(400).send('잘못된 페이지 정보');
-        return;
-      }
       const posts = await models.board.getPostList({
         start: page * pageSize,
         pageSize,
+        search,
       });
       const pagination = {
         page: Number(page),
