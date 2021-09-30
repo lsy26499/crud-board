@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { actions } from '../../modules/store';
@@ -32,6 +32,12 @@ const Header = () => {
     dispatch(actions.signOut());
     history.push('/');
   };
+
+  useEffect(() => {
+    if (history.location.pathname !== '/update-password') {
+      dispatch(actions.removeFoundUserData());
+    }
+  }, [history.location.pathname]);
 
   return (
     <header className='header'>

@@ -39,9 +39,9 @@ function* findUserIdRequest({ payload }) {
     const { data } = yield axios.get(`/find-id/?email=${email}`);
     const { foundData } = data;
     yield put(authActions.setFoundUserData({ foundData }));
-    const history = yield getContext('history');
-    yield put(authActions.removeFoundUserData());
-    yield history.push('/sign-in');
+    // const history = yield getContext('history');
+    // yield put(authActions.removeFoundUserData());
+    // yield history.push('/sign-in');
   } catch (error) {
     console.log(error);
     const {
@@ -92,6 +92,7 @@ function* signOutRequest() {
   try {
     axios.defaults.headers['AccessToken'] = null;
     axios.defaults.headers['Authorization'] = null;
+    alert('로그아웃 성공');
   } catch (error) {
     console.log(error);
   }

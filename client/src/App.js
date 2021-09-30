@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Router, Route, Switch } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { history } from './modules/store';
+import { useSelector, useDispatch } from 'react-redux';
+import { actions, history } from './modules/store';
 import {
   Home,
   SignIn,
@@ -18,10 +18,13 @@ import { axios } from './utils';
 
 const App = () => {
   const { accessToken, tokenType } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+
   useEffect(() => {
     const authorization = `${tokenType} ${accessToken}`;
     axios.defaults.headers['AccessToken'] = accessToken;
     axios.defaults.headers['Authorization'] = authorization;
+    dispatch(actions.removeFoundUserData());
   }, []);
 
   return (
