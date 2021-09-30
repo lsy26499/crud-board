@@ -53,8 +53,10 @@ function* findUserIdRequest({ payload }) {
 
 function* checkUserRequest({ payload }) {
   try {
-    const { userId } = payload;
-    const { data } = yield axios.get(`/check-user/?userId=${userId}`);
+    const { userId, email } = payload;
+    const { data } = yield axios.get(
+      `/check-user/?userId=${userId}&email=${email}`
+    );
     const { user: foundData } = data;
     const history = yield getContext('history');
     if (data) {

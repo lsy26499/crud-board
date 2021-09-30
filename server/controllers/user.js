@@ -99,9 +99,9 @@ module.exports = {
   findUserById: async (req, res) => {
     try {
       const { query } = req;
-      const { userId } = query;
+      const { userId, email } = query;
       const [user] = await models.user.findByUserId({ userId });
-      if (user) {
+      if (user && user?.email === email) {
         logger.info('success');
         res.status(200).send({ user: { id: user.id, userId: user.userId } });
         return;
