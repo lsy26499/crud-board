@@ -39,4 +39,5 @@ module.exports = {
       return files;
     }
   },
+  handleErrors: (error) => {},
 };

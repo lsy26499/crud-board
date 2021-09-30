@@ -1,5 +1,6 @@
 const models = require('../models');
 const { s3 } = require('../middlewares');
+const logger = require('../config/winston');
 
 module.exports = {
   createPost: async (req, res) => {
@@ -8,11 +9,13 @@ module.exports = {
       const { title, content, summary } = body;
       const { userId } = decoded;
       if (title.trim() === '') {
+        logger.warn('bad request');
         res.status(400).send('제목을 입력해주세요');
         return;
       }
       const [user] = await models.user.findByUserId({ userId });
       if (!user) {
+        logger.warn('user not found');
         res.status(404).send('존재하지 않는 유저');
         return;
       }
@@ -33,9 +36,11 @@ module.exports = {
       }
       const images = files.length > 0 ? files.map((file) => file.location) : [];
 
+      logger.info('success');
       res.status(200).send({ id: boardId, title, content, summary, images });
     } catch (error) {
       console.log(error);
+      logger.error(error);
       res.status(500).send('서버 에러');
     }
   },
@@ -46,13 +51,16 @@ module.exports = {
       const [post] = await models.board.findFullPostDataById({ id });
       const images = await models.board.getImagesUrlAndName({ boardId: id });
       if (post) {
+        logger.info('success');
         res.status(200).send({ post: { ...post, images } });
         return;
       } else {
+        logger.warn('post not found');
         res.status(404).send('존재하지 않는 게시물');
       }
     } catch (error) {
       console.log(error);
+      logger.error(error);
       res.status(500).send('서버 에러');
     }
   },
@@ -65,18 +73,21 @@ module.exports = {
       const { userId } = decoded;
 
       if (title.trim() === '') {
+        logger.warn('bad request');
         res.status(400).send('제목을 입력해주세요');
         return;
       }
 
       const [user] = await models.user.findByUserId({ userId });
       if (!user) {
+        logger.warn('user not found');
         res.status(404).send('존재하지 않는 유저');
         return;
       }
 
       const [foundPost] = await models.board.findPostById({ id });
       if (foundPost.userId !== user.id) {
+        logger.warn('forbidden');
         res.status(403).send('유효하지 않은 요청');
         return;
       }
@@ -120,10 +131,10 @@ module.exports = {
           url: file.location,
           name: file.key,
         }));
-        console.log(images);
         await models.board.insertImages({ images, boardId: id });
       }
 
+      logger.info('success');
       res.status(200).send({
         id,
         title,
@@ -133,6 +144,7 @@ module.exports = {
       });
     } catch (error) {
       console.log(error);
+      logger.error(error);
       res.status(500).send('서버 에러');
     }
   },
@@ -144,20 +156,24 @@ module.exports = {
 
       const [user] = await models.user.findByUserId({ userId });
       if (!user) {
+        logger.warn('user not found');
         res.status(404).send('존재하지 않는 유저');
         return;
       }
 
       const [post] = await models.board.findPostById({ id });
       if (post.userId !== user.id) {
+        logger.warn('forbidden');
         res.status(403).send('유효하지 않은 요청');
         return;
       }
 
       await models.board.deletePost({ id });
+      logger.info('success');
       res.status(200).send('게시글 삭제 성공');
     } catch (error) {
       console.log(error);
+      logger.error(error);
       res.status(500).send('서버 에러');
     }
   },
@@ -180,9 +196,11 @@ module.exports = {
         totalItems,
         totalPages,
       };
+      logger.info('success');
       res.status(200).send({ posts, pagination });
     } catch (error) {
       console.log(error);
+      logger.error(error);
       res.status(500).send('서버 에러');
     }
   },
