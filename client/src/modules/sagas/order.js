@@ -14,7 +14,11 @@ function* kakaoPaymentReadyRequest({ payload }) {
       }
     );
     const { nextRedirectURL } = data;
-    window.open(nextRedirectURL);
+    window.open(
+      nextRedirectURL,
+      'new',
+      'width = 500, height = 500, top = 100, left = 200'
+    );
   } catch (error) {
     console.log(error);
   }

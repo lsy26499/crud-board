@@ -7,3 +7,6 @@ export { default as UpdatePassword } from './update-password';
 export { default as Post } from './post';
 export { default as CreatePost } from './create-post';
 export { default as UpdatePost } from './update-post';
+export { default as KakaoApproval } from './payment/kakao-approval';
+export { default as FailPayment } from './payment/fail-payment';
+export { default as CancelPayment } from './payment/cancel-payment';

@@ -59,9 +59,9 @@ module.exports = {
         quantity,
         total_amount: quantity * product.price,
         tax_free_amount: 0,
-        approval_url: `${redirectBaseUrl}?partner_order_id=${order.insertId}&partner_user_id=${user.id}`,
-        cancel_url: `${redirectBaseUrl}`,
-        fail_url: `${redirectBaseUrl}`,
+        approval_url: `${redirectBaseUrl}/payment/kakao/approval?partner_order_id=${order.insertId}&partner_user_id=${user.id}`,
+        cancel_url: `${redirectBaseUrl}/payment/kakao/cancel`,
+        fail_url: `${redirectBaseUrl}/payment/kakao/fail`,
       };
 
       const { data } = await axios.post(
