@@ -1,15 +1,15 @@
-import { useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { actions } from '../../../modules/store';
 
 const KakaoApproval = () => {
-  const {
-    partner_order_id: orderId,
-    partner_user_id: userId,
-    pg_token,
-  } = useParams;
+  const history = useHistory();
+  const search = history.location.search;
+  //! 이부분
 
-  const onClickApprovalButton = () => {};
+  const onClickApprovalButton = () => {
+    // dispatch(actions.kakaoPaymentApproval({ partner_order_id, pg_token }));
+  };
 
   return (
     <main>

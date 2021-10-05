@@ -24,11 +24,35 @@ function* kakaoPaymentReadyRequest({ payload }) {
   }
 }
 
+function* kakaoPaymentApprovalRequest({ payload }) {
+  try {
+    const { partner_order_id, pg_token } = payload;
+    const params = { partner_order_id, pg_token };
+    yield axios.post(
+      `/payment/kakao/approve`,
+      {},
+      {
+        params,
+      }
+    );
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 function* kakaoPaymentReadyWatcher() {
   const { kakaoPaymentReady } = orderActions;
   yield takeLatest(kakaoPaymentReady, kakaoPaymentReadyRequest);
 }
 
+function* kakaoPaymentApprovalWatcher() {
+  const { kakaoPaymentApproval } = orderActions;
+  yield takeLatest(kakaoPaymentApproval, kakaoPaymentApprovalRequest);
+}
+
 export default function* orderSaga() {
-  yield all([fork(kakaoPaymentReadyWatcher)]);
+  yield all([
+    fork(kakaoPaymentReadyWatcher),
+    fork(kakaoPaymentApprovalWatcher),
+  ]);
 }

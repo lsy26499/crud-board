@@ -37,4 +37,21 @@ module.exports = {
       });
     });
   },
+  findOrderById: function (data) {
+    const { orderId } = data;
+    return new Promise((res, rej) => {
+      db.then((conn) => {
+        conn
+          .query(`SELECT * FROM orders WHERE id=${orderId}`)
+          .then((rows) => {
+            res(rows);
+          })
+          .catch((err) => {
+            rej(err);
+          });
+      }).catch((err) => {
+        rej(err);
+      });
+    });
+  },
 };

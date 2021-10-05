@@ -89,4 +89,55 @@ module.exports = {
       res.status(500).send('서버 에러');
     }
   },
+  approveKakaoPayment: async (req, res) => {
+    try {
+      const { decoded, body } = req;
+      const { userId } = decoded;
+      const { pg_token, partner_order_id } = body;
+      const { KAKAO_APP_ADMIN_KEY, KAKAO_PAY_CID } = process.env;
+
+      const [user] = await models.user.findByUserId({ userId });
+      if (!user) {
+        logger.warn('user not found');
+        res.status(404).send('존재하지 않는 유저');
+        return;
+      }
+
+      const [order] = await models.order.findOrderById({
+        orderId: partner_order_id,
+      });
+      if (!user) {
+        logger.warn('order not found');
+        res.status(404).send('존재하지 않는 주문');
+        return;
+      }
+      const { tid } = order;
+
+      const params = {
+        cid: KAKAO_PAY_CID,
+        tid,
+        partner_order_id,
+        partner_user_id: user.id,
+        pg_token,
+      };
+      const { data } = await axios.post(
+        'https://kapi.kakao.com/v1/payment/approve',
+        {},
+        {
+          params,
+          headers: {
+            Authorization: `KakaoAK ${KAKAO_APP_ADMIN_KEY}`,
+            'Content-type': 'application/x-www-form-urlencoded;charset=utf-8',
+          },
+        }
+      );
+      console.log(data);
+      // logger.info('success');
+      res.status(200).send('성공');
+    } catch (error) {
+      console.log(error);
+      logger.error(error);
+      res.status(500).send('서버 에러');
+    }
+  },
 };

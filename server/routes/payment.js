@@ -10,5 +10,10 @@ paymentRouter.post(
   verifyJwt,
   controllers.payment.readyToKakaoPayment
 );
+paymentRouter.post(
+  '/payment/kakao/approve',
+  verifyJwt,
+  controllers.payment.approveKakaoPayment
+);
 
 module.exports = paymentRouter;

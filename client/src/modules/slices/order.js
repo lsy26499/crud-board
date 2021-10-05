@@ -12,6 +12,7 @@ export const orderSlice = createSlice({
       const { payload } = action;
       state.nextRedirectURL = payload.nextRedirectURL;
     },
+    kakaoPaymentApproval: (state, action) => {},
   },
 });
 
