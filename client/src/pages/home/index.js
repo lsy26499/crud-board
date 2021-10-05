@@ -5,6 +5,7 @@ import { Header, Main } from '../../compoentns';
 import { Pagination } from '@material-ui/lab';
 import { actions } from '../../modules/store';
 import { formatDistance } from 'date-fns';
+import axiosModule from 'axios';
 import './index.scss';
 
 const Home = () => {
@@ -21,6 +22,8 @@ const Home = () => {
     dispatch(actions.getPostList({ page: page - 1, pageSize, search }));
   };
 
+  const onClickButton = async () => {};
+
   useEffect(() => {
     dispatch(actions.getPostList({ page, pageSize, search }));
   }, []);
@@ -29,6 +32,7 @@ const Home = () => {
     <div className='home'>
       <Header />
       <Main>
+        <div onClick={onClickButton}>결제 테스트</div>
         <div className='main-wrapper'>
           <ul className='article-container'>
             {posts.map((post) => (
