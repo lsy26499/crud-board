@@ -5,7 +5,6 @@ import { Header, Main } from '../../compoentns';
 import { Pagination } from '@material-ui/lab';
 import { actions } from '../../modules/store';
 import { formatDistance } from 'date-fns';
-import axiosModule from 'axios';
 import './index.scss';
 
 const Home = () => {
