@@ -8,7 +8,9 @@ import { formatDistance } from 'date-fns';
 import './index.scss';
 
 const Home = () => {
+  const { isLoggedIn } = useSelector((state) => state.auth);
   const { posts, pagination, search } = useSelector((state) => state.board);
+  const [productId, quantity] = [1, 1];
   const { page, pageSize, totalPages } = pagination;
   const dispatch = useDispatch();
   const history = useHistory();
@@ -21,7 +23,13 @@ const Home = () => {
     dispatch(actions.getPostList({ page: page - 1, pageSize, search }));
   };
 
-  const onClickButton = async () => {};
+  const onClickButton = () => {
+    if (!isLoggedIn) {
+      alert('로그인 후에 결제가 가능합니다');
+      return;
+    }
+    dispatch(actions.kakaoPaymentReady({ productId, quantity }));
+  };
 
   useEffect(() => {
     dispatch(actions.getPostList({ page, pageSize, search }));

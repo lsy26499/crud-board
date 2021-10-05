@@ -26,4 +26,11 @@ export const initialState = {
       loading: false,
     },
   },
+  product: {
+    id: 1,
+    quantity: 1,
+  },
+  order: {
+    nextRedirectURL: null,
+  },
 };
