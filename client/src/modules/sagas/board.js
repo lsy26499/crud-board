@@ -49,7 +49,7 @@ function* createPostRequest({ payload }) {
     content,
     summary,
   };
-  //! 여기 체크
+
   const formData = new FormData();
   images.forEach((image) => {
     formData.append('images', image);

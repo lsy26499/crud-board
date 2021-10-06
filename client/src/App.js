@@ -15,6 +15,7 @@ import {
   KakaoApproval,
   FailPayment,
   CancelPayment,
+  SuccessPayment,
 } from './pages';
 import './index.scss';
 import { axios } from './utils';
@@ -46,6 +47,7 @@ const App = () => {
           <Route path='/payment/kakao/approval' component={KakaoApproval} />
           <Route path='/payment/kakao/cancel' component={CancelPayment} />
           <Route path='/payment/kakao/fail' component={FailPayment} />
+          <Route path='/payment/success' component={SuccessPayment} />
         </Switch>
       </Router>
     </div>

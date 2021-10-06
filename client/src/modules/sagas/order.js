@@ -1,4 +1,4 @@
-import { all, fork, takeLatest } from 'redux-saga/effects';
+import { all, fork, takeLatest, put, getContext } from 'redux-saga/effects';
 import { orderActions } from '../slices/order';
 import { axios } from '../../utils';
 
@@ -13,9 +13,10 @@ function* kakaoPaymentReadyRequest({ payload }) {
         params,
       }
     );
-    const { nextRedirectURL } = data;
-    window.open(
-      nextRedirectURL,
+    const { nextRedirectURL, tid } = data;
+    yield sessionStorage.setItem('tid', tid);
+    yield window.open(
+      `${nextRedirectURL}`,
       'new',
       'width = 500, height = 500, top = 100, left = 200'
     );
@@ -26,15 +27,11 @@ function* kakaoPaymentReadyRequest({ payload }) {
 
 function* kakaoPaymentApprovalRequest({ payload }) {
   try {
-    const { partner_order_id, pg_token } = payload;
-    const params = { partner_order_id, pg_token };
-    yield axios.post(
-      `/payment/kakao/approve`,
-      {},
-      {
-        params,
-      }
-    );
+    console.log(payload);
+    yield axios.post(`/payment/kakao/approve`, { ...payload });
+    const history = yield getContext('history');
+    history.push(`/payment/success`);
+    sessionStorage.removeItem('tid');
   } catch (error) {
     console.log(error);
   }

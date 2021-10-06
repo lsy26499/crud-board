@@ -8,10 +8,6 @@ export const orderSlice = createSlice({
   initialState: { ...initialState.order },
   reducers: {
     kakaoPaymentReady: (state, action) => {},
-    kakaoPaymentReadySuccess: (state, action) => {
-      const { payload } = action;
-      state.nextRedirectURL = payload.nextRedirectURL;
-    },
     kakaoPaymentApproval: (state, action) => {},
   },
 });

@@ -30,7 +30,4 @@ export const initialState = {
     id: 1,
     quantity: 1,
   },
-  order: {
-    nextRedirectURL: null,
-  },
 };

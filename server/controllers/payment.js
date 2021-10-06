@@ -44,22 +44,23 @@ module.exports = {
       }
 
       const orderNumber = generateOrderNumber();
-      const order = await models.order.createOrder({
-        orderNumber,
-        productId,
-        quantity,
-        userId: user.id,
-      });
+      // const order = await models.order.createOrder({
+      //   orderNumber,
+      //   productId,
+      //   quantity,
+      //   userId: user.id,
+      // });
 
       const params = {
         cid: KAKAO_PAY_CID,
-        partner_order_id: order.insertId,
+        partner_order_id: orderNumber,
         partner_user_id: user.id,
         item_name: product.name,
+        item_code: product.id,
         quantity,
         total_amount: quantity * product.price,
         tax_free_amount: 0,
-        approval_url: `${redirectBaseUrl}/payment/kakao/approval?partner_order_id=${order.insertId}&partner_user_id=${user.id}`,
+        approval_url: `${redirectBaseUrl}/payment/kakao/approval?partner_order_id=${orderNumber}&partner_user_id=${user.id}`,
         cancel_url: `${redirectBaseUrl}/payment/kakao/cancel`,
         fail_url: `${redirectBaseUrl}/payment/kakao/fail`,
       };
@@ -77,11 +78,13 @@ module.exports = {
       );
 
       const { tid, next_redirect_pc_url } = data;
-      await models.order.updateKakaoReadyTid({ tid, orderId: order.insertId });
+      console.log(tid);
+      // await models.order.updateKakaoReadyTid({ tid, orderId: order.insertId });
 
       logger.info('success');
       res.status(200).send({
         nextRedirectURL: next_redirect_pc_url,
+        tid,
       });
     } catch (error) {
       console.log(error);
@@ -93,7 +96,7 @@ module.exports = {
     try {
       const { decoded, body } = req;
       const { userId } = decoded;
-      const { pg_token, partner_order_id } = body;
+      const { pg_token, partner_order_id, tid } = body;
       const { KAKAO_APP_ADMIN_KEY, KAKAO_PAY_CID } = process.env;
 
       const [user] = await models.user.findByUserId({ userId });
@@ -102,16 +105,6 @@ module.exports = {
         res.status(404).send('존재하지 않는 유저');
         return;
       }
-
-      const [order] = await models.order.findOrderById({
-        orderId: partner_order_id,
-      });
-      if (!user) {
-        logger.warn('order not found');
-        res.status(404).send('존재하지 않는 주문');
-        return;
-      }
-      const { tid } = order;
 
       const params = {
         cid: KAKAO_PAY_CID,
@@ -131,8 +124,24 @@ module.exports = {
           },
         }
       );
-      console.log(data);
-      // logger.info('success');
+
+      const {
+        tid: resultTid,
+        partner_order_id: orderNumber,
+        item_code: productId,
+        quantity,
+      } = data;
+      const paymentType = 'KAKAOPAY';
+      await models.order.createOrder({
+        userId: user.id,
+        tid: resultTid,
+        orderNumber,
+        productId,
+        quantity,
+        paymentType,
+      });
+
+      logger.info('success');
       res.status(200).send('성공');
     } catch (error) {
       console.log(error);

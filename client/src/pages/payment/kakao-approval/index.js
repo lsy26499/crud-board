@@ -1,14 +1,18 @@
 import { useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { actions } from '../../../modules/store';
+import queryString from 'query-string';
 
 const KakaoApproval = () => {
   const history = useHistory();
   const search = history.location.search;
-  //! 이부분
+  const query = queryString.parse(search);
+  const tid = sessionStorage.getItem('tid');
+  const dispatch = useDispatch();
 
   const onClickApprovalButton = () => {
-    // dispatch(actions.kakaoPaymentApproval({ partner_order_id, pg_token }));
+    console.log(tid);
+    dispatch(actions.kakaoPaymentApproval({ ...query, tid }));
   };
 
   return (
