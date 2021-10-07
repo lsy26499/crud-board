@@ -116,6 +116,10 @@ module.exports = {
         const found = postHashtags.find((item) => item.name === tag);
         return found ? false : true;
       });
+      if (deletedHashtag.length > 0) {
+        const hashtagIds = deletedHashtag.map((tag) => tag.id);
+        await models.hashtag.deleteBoardHashtag({ hashtagIds });
+      }
       if (fileteredHashtag.length > 0) {
         // 기존 db에 저장되어 있던 해시태그
         const storedHashtags = await models.hashtag.findHashtags({
@@ -126,11 +130,6 @@ module.exports = {
           const found = storedHashtags.find((item) => item.name === tag);
           return found ? false : true;
         });
-
-        if (deletedHashtag.length > 0) {
-          const hashtagIds = deletedHashtag.map((tag) => tag.id);
-          await models.hashtag.deleteBoardHashtag({ hashtagIds });
-        }
         if (newHashtags.length > 0) {
           await models.hashtag.createHashtags({
             hashtag: newHashtags,
