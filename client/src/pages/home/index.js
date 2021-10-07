@@ -49,7 +49,9 @@ const Home = () => {
                 onClick={() => onClickPost(post.id)}
               >
                 <h3 className='article-title'>{post.title}</h3>
-                <p className='article-summary'>{post.summary}</p>
+                <p className='article-summary'>
+                  {post.hashtag.map((tag) => tag.name).join(', ')}
+                </p>
                 <div className='article-desc'>
                   <span className='article-username'>{`by ${post.userId}`}</span>
                   <span className='article-created-at'>

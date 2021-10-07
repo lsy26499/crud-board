@@ -9,13 +9,13 @@ import './index.scss';
 
 const UpdatePost = () => {
   const { currentPost } = useSelector((state) => state.board);
-  const { id, title, content, summary, images: postImages } = currentPost;
+  const { id, title, content, hashtag, images: postImages } = currentPost;
   const imageUrls = postImages.map((image) => image.url);
 
   const [values, setValues] = useState({
     title,
     content,
-    summary,
+    hashtag: hashtag.map((tag) => tag.name).join(','),
   });
   const [images, setImages] = useState([]);
   const imageInputRef = useRef();
@@ -68,12 +68,22 @@ const UpdatePost = () => {
       return;
     }
     const files = images.map((image) => image.file || image.url);
+    const tags = values.hashtag.split(',');
+    const trimmedHashtag = tags.map((tag) => tag.trim());
+    const isTagNameOverLimit = Boolean(
+      trimmedHashtag.filter((tag) => tag.length > 20).length
+    );
+    if (isTagNameOverLimit) {
+      alert('20자 이상인 태그가 존재합니다');
+      return;
+    }
+
     dispatch(
       actions.updatePost({
         id,
         title: values.title,
         content: values.content,
-        summary: values.summary,
+        hashtag: trimmedHashtag,
         images: files,
       })
     );
@@ -130,9 +140,9 @@ const UpdatePost = () => {
               onChange={onChangeValues}
             ></input>
             <input
-              name='summary'
-              value={values.summary}
-              placeholder='1줄 요약'
+              name='hashtag'
+              placeholder='해시태그 (쉼표로 구분, 20자 이내)'
+              value={values.hashtag}
               onChange={onChangeValues}
             ></input>
             <div className='form-item file'>

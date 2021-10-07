@@ -2,7 +2,8 @@ const express = require('express');
 const controllers = require('../controllers');
 const middlewares = require('../middlewares');
 
-const { verifyJwt, upload, s3DeleteImage, validateFiles } = middlewares;
+const { verifyJwt, upload, s3DeleteImage, validateFiles, validateHashtags } =
+  middlewares;
 
 const boardRouter = express.Router();
 
@@ -11,6 +12,7 @@ boardRouter.post(
   verifyJwt,
   validateFiles,
   upload,
+  validateHashtags,
   controllers.board.createPost
 );
 boardRouter.get('/post/:id', controllers.board.getPost);
@@ -19,6 +21,7 @@ boardRouter.patch(
   verifyJwt,
   validateFiles,
   upload,
+  validateHashtags,
   controllers.board.updatePost
 );
 boardRouter.delete(

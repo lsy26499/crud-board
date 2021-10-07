@@ -10,7 +10,7 @@ import './index.scss';
 const CreatePost = () => {
   const [values, setValues] = useState({
     title: '',
-    summary: '',
+    hashtag: '',
     content: '',
   });
   const [images, setImages] = useState([]);
@@ -67,11 +67,21 @@ const CreatePost = () => {
     }
 
     const files = images.map((image) => image.file);
+    const tags = values.hashtag.split(',');
+    const trimmedHashtag = tags.map((tag) => tag.trim());
+    const isTagNameOverLimit = Boolean(
+      trimmedHashtag.filter((tag) => tag.length > 20).length
+    );
+    if (isTagNameOverLimit) {
+      alert('20자 이상인 태그가 존재합니다');
+      return;
+    }
+
     dispatch(
       actions.createPost({
         title: values.title,
         content: values.content,
-        summary: values.summary,
+        hashtag: trimmedHashtag,
         images: files,
       })
     );
@@ -93,9 +103,9 @@ const CreatePost = () => {
             </div>
             <div className='form-item'>
               <input
-                name='summary'
-                placeholder='1줄 요약'
-                value={values.summary}
+                name='hashtag'
+                placeholder='해시태그 (쉼표로 구분, 20자 이내)'
+                value={values.hashtag}
                 onChange={onChangeValues}
               ></input>
             </div>

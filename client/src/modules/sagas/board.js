@@ -43,11 +43,11 @@ function* getPostRequest({ payload }) {
 }
 
 function* createPostRequest({ payload }) {
-  const { title, content, summary, images } = payload;
+  const { title, content, hashtag, images } = payload;
   const postObj = {
     title,
     content,
-    summary,
+    hashtag,
   };
 
   const formData = new FormData();
@@ -78,11 +78,11 @@ function* createPostRequest({ payload }) {
 }
 
 function* updatePostRequest({ payload }) {
-  const { title, content, summary, images, id } = payload;
+  const { title, content, hashtag, images, id } = payload;
   const postObj = {
     title,
     content,
-    summary,
+    hashtag,
   };
   const formData = new FormData();
   images.forEach((image) => {

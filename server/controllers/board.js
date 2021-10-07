@@ -6,7 +6,7 @@ module.exports = {
   createPost: async (req, res) => {
     try {
       const { body, decoded, files } = req;
-      const { title, content, summary } = body;
+      const { title, content, hashtag } = body;
       const { userId } = decoded;
       if (title.trim() === '') {
         logger.warn('bad request');
@@ -19,13 +19,27 @@ module.exports = {
         res.status(404).send('존재하지 않는 유저');
         return;
       }
+
+      const existHashtag = await models.hashtag.findHashtags({ hashtag });
+      const fileteredHashtag = hashtag.filter((tag) => {
+        const found = existHashtag.find((item) => item.name === tag);
+        return found ? false : true;
+      });
+      if (fileteredHashtag.length > 0) {
+        await models.hashtag.createHashtags({
+          hashtag: fileteredHashtag,
+        });
+      }
+      const hashtags = await models.hashtag.findHashtags({ hashtag });
+      const hashtagIds = hashtags.map((tag) => tag.id);
+
       const data = await models.board.createPost({
         id: user.id,
         title,
         content,
-        summary,
       });
       const boardId = data.insertId;
+      await models.hashtag.insertBoardAndHashtag({ boardId, hashtagIds });
 
       if (files.length > 0) {
         const images = files.map((file) => ({
@@ -37,7 +51,9 @@ module.exports = {
       const images = files.length > 0 ? files.map((file) => file.location) : [];
 
       logger.info('success');
-      res.status(200).send({ id: boardId, title, content, summary, images });
+      res
+        .status(200)
+        .send({ id: boardId, title, hashtag: hashtags, content, images });
     } catch (error) {
       console.log(error);
       logger.error(error);
@@ -49,10 +65,13 @@ module.exports = {
       const { params } = req;
       const { id } = params;
       const [post] = await models.board.findFullPostDataById({ id });
+      const hashtag = await models.hashtag.findBoardHashtags({
+        boardIds: [post.id],
+      });
       const images = await models.board.getImagesUrlAndName({ boardId: id });
       if (post) {
         logger.info('success');
-        res.status(200).send({ post: { ...post, images } });
+        res.status(200).send({ post: { ...post, hashtag, images } });
         return;
       } else {
         logger.warn('post not found');
@@ -68,7 +87,7 @@ module.exports = {
     try {
       const { body, params, decoded, files } = req;
       const { images } = body;
-      const { title, content, summary } = body;
+      const { title, content, hashtag } = body;
       const { id } = params;
       const { userId } = decoded;
 
@@ -85,13 +104,60 @@ module.exports = {
         return;
       }
 
+      const postHashtags = await models.hashtag.findBoardHashtags({
+        boardIds: [id],
+      });
+      const deletedHashtag = postHashtags.filter((tag) => {
+        const found = hashtag.find((item) => item === tag.name);
+        return found ? false : true;
+      });
+      // 해당 게시글에 없던 해시태그
+      const fileteredHashtag = hashtag.filter((tag) => {
+        const found = postHashtags.find((item) => item.name === tag);
+        return found ? false : true;
+      });
+      // 기존 db에 저장되어 있던 해시태그
+      const storedHashtags = await models.hashtag.findHashtags({
+        hashtag: fileteredHashtag,
+      });
+      // db에 없는 해시태그
+      const newHashtags = fileteredHashtag.filter((tag) => {
+        const found = storedHashtags.find((item) => item.name === tag);
+        return found ? false : true;
+      });
+
+      if (deletedHashtag.length > 0) {
+        const hashtagIds = deletedHashtag.map((tag) => tag.id);
+        await models.hashtag.deleteBoardHashtag({ hashtagIds });
+      }
+      if (newHashtags.length > 0) {
+        await models.hashtag.createHashtags({
+          hashtag: newHashtags,
+        });
+      }
+
+      const hashtags = await models.hashtag.findHashtags({ hashtag });
+      const addedHashtags = hashtags.filter((tag) => {
+        const found = fileteredHashtag.find((item) => item === tag.name);
+        return found ? true : false;
+      });
+      const hashtagIds = addedHashtags.map((tag) => tag.id);
+
       const [foundPost] = await models.board.findPostById({ id });
       if (foundPost.userId !== user.id) {
         logger.warn('forbidden');
         res.status(403).send('유효하지 않은 요청');
         return;
       }
-      await models.board.updatePost({ title, content, summary, id });
+      await models.board.updatePost({ title, content, id });
+      await models.hashtag.insertBoardAndHashtag({
+        boardId: foundPost.id,
+        hashtagIds,
+      });
+      const resultHashtag = await models.hashtag.findBoardHashtags({
+        boardIds: [foundPost.id],
+      });
+      console.log(resultHashtag);
 
       // 이미 존재하는 이미지 수정 처리
       const postedImages = !images
@@ -139,7 +205,6 @@ module.exports = {
         id,
         title,
         content,
-        summary,
         images: [...postedImages, ...files.map((file) => file.location)],
       });
     } catch (error) {
@@ -185,11 +250,21 @@ module.exports = {
       const totalItems = totalItemNumber['COUNT(*)'];
       const totalPages = Math.ceil(totalItems / pageSize);
 
-      const posts = await models.board.getPostList({
+      const post = await models.board.getPostList({
         start: page * pageSize,
         pageSize,
         search,
       });
+
+      const boardIds = post.map((item) => item.id);
+      const hashtags = await models.hashtag.findBoardHashtags({ boardIds });
+
+      const posts = post.map((item) => {
+        const { id } = item;
+        const postHashtags = hashtags.filter((tag) => tag.boardId === id);
+        return { ...item, hashtag: postHashtags };
+      });
+
       const pagination = {
         page: Number(page),
         pageSize: Number(pageSize),

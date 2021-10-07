@@ -46,7 +46,9 @@ const Post = () => {
             {!currentPost.loading && (
               <section className='post-content'>
                 <h1 className='title'>{currentPost.title}</h1>
-                <p className='summary'>{currentPost.summary}</p>
+                <p className='hashtag'>
+                  {currentPost.hashtag.map((tag) => tag.name).join(', ')}
+                </p>
                 <div className='title-desc'>
                   <span>{`by ${currentPost.userId}`}</span>
                   {currentPost.createdAt && (
