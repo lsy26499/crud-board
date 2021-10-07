@@ -116,24 +116,26 @@ module.exports = {
         const found = postHashtags.find((item) => item.name === tag);
         return found ? false : true;
       });
-      // 기존 db에 저장되어 있던 해시태그
-      const storedHashtags = await models.hashtag.findHashtags({
-        hashtag: fileteredHashtag,
-      });
-      // db에 없는 해시태그
-      const newHashtags = fileteredHashtag.filter((tag) => {
-        const found = storedHashtags.find((item) => item.name === tag);
-        return found ? false : true;
-      });
-
-      if (deletedHashtag.length > 0) {
-        const hashtagIds = deletedHashtag.map((tag) => tag.id);
-        await models.hashtag.deleteBoardHashtag({ hashtagIds });
-      }
-      if (newHashtags.length > 0) {
-        await models.hashtag.createHashtags({
-          hashtag: newHashtags,
+      if (fileteredHashtag.length > 0) {
+        // 기존 db에 저장되어 있던 해시태그
+        const storedHashtags = await models.hashtag.findHashtags({
+          hashtag: fileteredHashtag,
         });
+        // db에 없는 해시태그
+        const newHashtags = fileteredHashtag.filter((tag) => {
+          const found = storedHashtags.find((item) => item.name === tag);
+          return found ? false : true;
+        });
+
+        if (deletedHashtag.length > 0) {
+          const hashtagIds = deletedHashtag.map((tag) => tag.id);
+          await models.hashtag.deleteBoardHashtag({ hashtagIds });
+        }
+        if (newHashtags.length > 0) {
+          await models.hashtag.createHashtags({
+            hashtag: newHashtags,
+          });
+        }
       }
 
       const hashtags = await models.hashtag.findHashtags({ hashtag });
@@ -141,7 +143,13 @@ module.exports = {
         const found = fileteredHashtag.find((item) => item === tag.name);
         return found ? true : false;
       });
-      const hashtagIds = addedHashtags.map((tag) => tag.id);
+      if (addedHashtags.length > 0) {
+        const hashtagIds = addedHashtags.map((tag) => tag.id);
+        await models.hashtag.insertBoardAndHashtag({
+          boardId: foundPost.id,
+          hashtagIds,
+        });
+      }
 
       const [foundPost] = await models.board.findPostById({ id });
       if (foundPost.userId !== user.id) {
@@ -150,10 +158,7 @@ module.exports = {
         return;
       }
       await models.board.updatePost({ title, content, id });
-      await models.hashtag.insertBoardAndHashtag({
-        boardId: foundPost.id,
-        hashtagIds,
-      });
+
       const resultHashtag = await models.hashtag.findBoardHashtags({
         boardIds: [foundPost.id],
       });
