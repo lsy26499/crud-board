@@ -39,7 +39,7 @@ const Home = () => {
     <div className='home'>
       <Header />
       <Main>
-        <div onClick={onClickButton}>결제 테스트</div>
+        <div onClick={onClickButton}>카카오페이 결제 테스트</div>
         <div className='main-wrapper'>
           <ul className='article-container'>
             {posts.map((post) => (

@@ -9,8 +9,6 @@ import './index.scss';
 const Post = () => {
   const { user } = useSelector((state) => state.auth);
   const { currentPost } = useSelector((state) => state.board);
-  // const { title, userId, content, createdAt, summary, images, loading } =
-  //   currentPost;
   const dispatch = useDispatch();
   const history = useHistory();
   const params = useParams();
@@ -45,29 +43,31 @@ const Post = () => {
                 <li onClick={onClickDeleteButton}>삭제</li>
               </ul>
             )}
-            <section className='post-content'>
-              <h1 className='title'>{currentPost.title}</h1>
-              <p className='summary'>{currentPost.summary}</p>
-              <div className='title-desc'>
-                <span>{`by ${currentPost.userId}`}</span>
-                {currentPost.createdAt && (
-                  <span>
-                    {`${formatDistance(
-                      new Date(currentPost.createdAt),
-                      new Date()
-                    )} ago`}
-                  </span>
-                )}
-              </div>
-              <main className='content'>
-                {currentPost.images &&
-                  currentPost.images.length > 0 &&
-                  currentPost.images.map((image, i) => (
-                    <img src={image.url} key={i} />
-                  ))}
-                <p className='paragraph'>{currentPost.content}</p>
-              </main>
-            </section>
+            {!currentPost.loading && (
+              <section className='post-content'>
+                <h1 className='title'>{currentPost.title}</h1>
+                <p className='summary'>{currentPost.summary}</p>
+                <div className='title-desc'>
+                  <span>{`by ${currentPost.userId}`}</span>
+                  {currentPost.createdAt && (
+                    <span>
+                      {`${formatDistance(
+                        new Date(currentPost.createdAt),
+                        new Date()
+                      )} ago`}
+                    </span>
+                  )}
+                </div>
+                <main className='content'>
+                  {currentPost.images &&
+                    currentPost.images.length > 0 &&
+                    currentPost.images.map((image, i) => (
+                      <img src={image.url} key={i} />
+                    ))}
+                  <p className='paragraph'>{currentPost.content}</p>
+                </main>
+              </section>
+            )}
           </section>
         )}
       </Main>
