@@ -260,6 +260,19 @@ module.exports = {
         search,
       });
 
+      const pagination = {
+        page: Number(page),
+        pageSize: Number(pageSize),
+        totalItems,
+        totalPages,
+      };
+
+      if (post.length === 0) {
+        logger.info('success');
+        res.status(200).send({ posts: [], pagination });
+        return;
+      }
+
       const boardIds = post.map((item) => item.id);
       const hashtags = await models.hashtag.findBoardHashtags({ boardIds });
 
@@ -269,12 +282,6 @@ module.exports = {
         return { ...item, hashtag: postHashtags };
       });
 
-      const pagination = {
-        page: Number(page),
-        pageSize: Number(pageSize),
-        totalItems,
-        totalPages,
-      };
       logger.info('success');
       res.status(200).send({ posts, pagination });
     } catch (error) {

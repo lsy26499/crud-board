@@ -151,11 +151,13 @@ module.exports = {
     const { body } = req;
     const { hashtag } = body;
     const trimmedHashtag = hashtag.map((tag) => tag.trim());
-    const isTagNameOverLimit = Boolean(
-      trimmedHashtag.filter((tag) => tag.length > 20).length
+    const isTagInvalid = Boolean(
+      trimmedHashtag.filter((tag) => tag.length > 20 || tag === '').length
     );
-    if (isTagNameOverLimit) {
-      res.status(400).send('글자수 초과한 태그 존재 (20자)');
+    if (isTagInvalid) {
+      res
+        .status(400)
+        .send('글자수 초과한 태그 존재(20자)하거나 공백 문자 존재');
     }
     req.body.hashtag = trimmedHashtag;
     next();

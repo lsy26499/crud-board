@@ -69,11 +69,11 @@ const CreatePost = () => {
     const files = images.map((image) => image.file);
     const tags = values.hashtag.split(',');
     const trimmedHashtag = tags.map((tag) => tag.trim());
-    const isTagNameOverLimit = Boolean(
-      trimmedHashtag.filter((tag) => tag.length > 20).length
+    const isTagInvalid = Boolean(
+      trimmedHashtag.filter((tag) => tag.length > 20 || tag === '').length
     );
-    if (isTagNameOverLimit) {
-      alert('20자 이상인 태그가 존재합니다');
+    if (isTagInvalid) {
+      alert('공백 문자이거나 20자 이상인 태그가 존재합니다');
       return;
     }
 
