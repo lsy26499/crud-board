@@ -21,7 +21,7 @@ module.exports = {
     return new Promise((res, rej) => {
       db.then((conn) => {
         conn
-          .query(`SELECT * FROM user WHERE userId = '${data.userId}'`)
+          .query(`SELECT * FROM user WHERE user_id = '${data.userId}'`)
           .then((rows) => {
             res(rows);
           })
@@ -37,7 +37,7 @@ module.exports = {
     return new Promise((res, rej) => {
       db.then((conn) => {
         conn
-          .query(`SELECT userId FROM user WHERE email = '${data.email}'`)
+          .query(`SELECT user_id FROM user WHERE email = '${data.email}'`)
           .then((rows) => {
             res(rows);
           })
@@ -88,7 +88,7 @@ module.exports = {
       db.then((conn) => {
         conn
           .query(
-            `INSERT INTO user(userId, email, password) VALUES ('${data.userId}', '${data.email}', '${data.password}')`
+            `INSERT INTO user(user_id, email, password) VALUES ('${data.userId}', '${data.email}', '${data.password}')`
           )
           .then((rows) => {
             res(rows);

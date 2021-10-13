@@ -7,7 +7,7 @@ module.exports = {
       db.then((conn) => {
         conn
           .query(
-            `INSERT INTO orders (orderNumber, productId, quantity, paymentType, userId${
+            `INSERT INTO orders (order_number, product_id, quantity, payment_type, user_id${
               tid ? `, tid` : ''
             }) 
             VALUES ('${orderNumber}', ${productId}, ${quantity}, '${paymentType}', ${userId}${

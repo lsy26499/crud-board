@@ -6,7 +6,7 @@ module.exports = {
       db.then((conn) => {
         conn
           .query(
-            `INSERT INTO board (title, content, userId) VALUES ('${data.title}', '${data.content}', '${data.id}')`
+            `INSERT INTO board (title, content, user_id) VALUES ('${data.title}', '${data.content}', '${data.id}')`
           )
           .then((rows) => {
             res(rows);
@@ -40,8 +40,8 @@ module.exports = {
       db.then((conn) => {
         conn
           .query(
-            `SELECT board.id, board.title, user.userId, board.content, board.createdAt FROM board 
-            INNER JOIN user ON board.userId=user.id
+            `SELECT board.id, board.title, user.user_id, board.content, board.created_at FROM board 
+            INNER JOIN user ON board.user_id=user.id
             WHERE board.id=${data.id}`
           )
           .then((rows) => {
@@ -98,8 +98,8 @@ module.exports = {
       db.then((conn) => {
         conn
           .query(
-            `SELECT board.id, user.userId, board.title, board.createdAt FROM board 
-            LEFT JOIN user ON board.userId=user.id ${query}ORDER BY id 
+            `SELECT board.id, user.user_id, board.title, board.created_at FROM board 
+            LEFT JOIN user ON board.user_id=user.id ${query}ORDER BY id 
             DESC LIMIT ${data.start},${data.pageSize}`
           )
           .then((rows) => {
@@ -144,7 +144,7 @@ module.exports = {
     return new Promise((res, rej) => {
       db.then((conn) => {
         conn
-          .query(`INSERT INTO images (name, url, boardId) VALUES ${query}`)
+          .query(`INSERT INTO images (name, url, board_id) VALUES ${query}`)
           .then((rows) => {
             res(rows);
           })
@@ -160,7 +160,7 @@ module.exports = {
     return new Promise((res, rej) => {
       db.then((conn) => {
         conn
-          .query(`SELECT name, url FROM images WHERE boardId=${data.boardId}`)
+          .query(`SELECT name, url FROM images WHERE board_id=${data.boardId}`)
           .then((rows) => {
             res(rows);
           })
@@ -176,7 +176,7 @@ module.exports = {
     return new Promise((res, rej) => {
       db.then((conn) => {
         conn
-          .query(`SELECT * FROM images WHERE boardId=${data.boardId}`)
+          .query(`SELECT * FROM images WHERE board_id=${data.boardId}`)
           .then((rows) => {
             res(rows);
           })
@@ -192,7 +192,7 @@ module.exports = {
     return new Promise((res, rej) => {
       db.then((conn) => {
         conn
-          .query(`DELETE FROM images WHERE boardId=${data.boardId}`)
+          .query(`DELETE FROM images WHERE board_id=${data.boardId}`)
           .then((rows) => {
             res(rows);
           })

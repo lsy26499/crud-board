@@ -70,8 +70,30 @@ module.exports = {
       });
       const images = await models.board.getImagesUrlAndName({ boardId: id });
       if (post) {
+        const {
+          id,
+          title,
+          user_id: userId,
+          content,
+          created_at: createdAt,
+        } = post;
+        const postHashtags = hashtag.map((item) => ({
+          id: item.id,
+          name: item.name,
+          boardId: item.board_id,
+        }));
         logger.info('success');
-        res.status(200).send({ post: { ...post, hashtag, images } });
+        res.status(200).send({
+          post: {
+            id,
+            title,
+            userId,
+            content,
+            createdAt,
+            hashtag: postHashtags,
+            images,
+          },
+        });
         return;
       } else {
         logger.warn('post not found');
@@ -151,7 +173,7 @@ module.exports = {
       }
 
       const [foundPost] = await models.board.findPostById({ id });
-      if (foundPost.userId !== user.id) {
+      if (foundPost.user_id !== user.id) {
         logger.warn('forbidden');
         res.status(403).send('유효하지 않은 요청');
         return;
@@ -161,7 +183,6 @@ module.exports = {
       const resultHashtag = await models.hashtag.findBoardHashtags({
         boardIds: [foundPost.id],
       });
-      console.log(resultHashtag);
 
       // 이미 존재하는 이미지 수정 처리
       const postedImages = !images
@@ -231,7 +252,7 @@ module.exports = {
       }
 
       const [post] = await models.board.findPostById({ id });
-      if (post.userId !== user.id) {
+      if (post.user_id !== user.id) {
         logger.warn('forbidden');
         res.status(403).send('유효하지 않은 요청');
         return;
@@ -277,9 +298,15 @@ module.exports = {
       const hashtags = await models.hashtag.findBoardHashtags({ boardIds });
 
       const posts = post.map((item) => {
-        const { id } = item;
-        const postHashtags = hashtags.filter((tag) => tag.boardId === id);
-        return { ...item, hashtag: postHashtags };
+        const { id, title, user_id: userId, created_at: createdAt } = item;
+        const postHashtags = hashtags
+          .filter((tag) => tag.board_id === id)
+          .map((tag) => ({
+            id: tag.id,
+            name: tag.name,
+            boardId: tag.board_id,
+          }));
+        return { id, title, userId, createdAt, hashtag: postHashtags };
       });
 
       logger.info('success');

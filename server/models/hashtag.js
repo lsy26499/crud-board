@@ -44,9 +44,9 @@ module.exports = {
       db.then((conn) => {
         conn
           .query(
-            `SELECT board_hashtag.boardId, hashtag.id, hashtag.name FROM board_hashtag 
-            LEFT JOIN hashtag ON board_hashtag.hashtagId=hashtag.id 
-            WHERE boardId IN (${query})`
+            `SELECT board_hashtag.board_id, hashtag.id, hashtag.name FROM board_hashtag 
+            LEFT JOIN hashtag ON board_hashtag.hashtag_id=hashtag.id 
+            WHERE board_id IN (${query})`
           )
           .then((rows) => {
             res(rows);
@@ -68,7 +68,7 @@ module.exports = {
       db.then((conn) => {
         conn
           .query(
-            `INSERT INTO board_hashtag (hashtagId, boardId) VALUES ${query}`
+            `INSERT INTO board_hashtag (hashtag_id, board_id) VALUES ${query}`
           )
           .then((rows) => {
             res(rows);

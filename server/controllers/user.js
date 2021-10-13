@@ -12,9 +12,9 @@ module.exports = {
       const [user] = await models.user.findByUserId({ userId });
       const matchPassword = await bcrypt.compare(password, user.password);
       if (user && matchPassword) {
-        const { id, email, userId } = user;
+        const { id, email, user_id } = user;
         const accessToken = jwt.sign(
-          { email, userId },
+          { email, userId: user_id },
           process.env.JWT_SECRET,
           {
             expiresIn: '1h',
