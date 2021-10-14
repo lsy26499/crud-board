@@ -8,6 +8,7 @@ export { default as Post } from './post';
 export { default as CreatePost } from './create-post';
 export { default as UpdatePost } from './update-post';
 export { default as KakaoApproval } from './payment/kakao-approval';
+export { default as IamportApproval } from './payment/iamport-approval';
 export { default as FailPayment } from './payment/fail-payment';
 export { default as CancelPayment } from './payment/cancel-payment';
 export { default as SuccessPayment } from './payment/success-payment';

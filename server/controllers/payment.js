@@ -44,12 +44,6 @@ module.exports = {
       }
 
       const orderNumber = generateOrderNumber();
-      // const order = await models.order.createOrder({
-      //   orderNumber,
-      //   productId,
-      //   quantity,
-      //   userId: user.id,
-      // });
 
       const params = {
         cid: KAKAO_PAY_CID,
@@ -61,8 +55,8 @@ module.exports = {
         total_amount: quantity * product.price,
         tax_free_amount: 0,
         approval_url: `${redirectBaseUrl}/payment/kakao/approval?partner_order_id=${orderNumber}&partner_user_id=${user.id}`,
-        cancel_url: `${redirectBaseUrl}/payment/kakao/cancel`,
-        fail_url: `${redirectBaseUrl}/payment/kakao/fail`,
+        cancel_url: `${redirectBaseUrl}/payment/cancel`,
+        fail_url: `${redirectBaseUrl}/payment/fail`,
       };
 
       const { data } = await axios.post(
@@ -78,7 +72,6 @@ module.exports = {
       );
 
       const { tid, next_redirect_pc_url } = data;
-      console.log(tid);
       // await models.order.updateKakaoReadyTid({ tid, orderId: order.insertId });
 
       logger.info('success');
@@ -143,6 +136,124 @@ module.exports = {
 
       logger.info('success');
       res.status(200).send('성공');
+    } catch (error) {
+      console.log(error);
+      logger.error(error);
+      res.status(500).send('서버 에러');
+    }
+  },
+  readyToIamportPayment: async (req, res) => {
+    try {
+      const { decoded, query } = req;
+      const { userId } = decoded;
+      const { productId, quantity = 1 } = query;
+
+      const [user] = await models.user.findByUserId({ userId });
+      if (!user) {
+        logger.warn('user not found');
+        res.status(404).send('존재하지 않는 유저');
+        return;
+      }
+
+      const [product] = await models.product.findProductById({ productId });
+      if (!product) {
+        logger.warn('user not found');
+        res.status(404).send('존재하지 않는 상품');
+        return;
+      }
+
+      const orderNumber = generateOrderNumber();
+      const paymentType = 'IAMPORT';
+      await models.order.createOrder({
+        userId: user.id,
+        orderNumber,
+        productId,
+        quantity,
+        paymentType,
+      });
+
+      logger.info('success');
+      res.status(200).send({
+        orderNumber,
+      });
+    } catch (error) {
+      console.log(error);
+      logger.error(error);
+      res.status(500).send('서버 에러');
+    }
+  },
+  approveImaportPayment: async (req, res) => {
+    try {
+      const { decoded, query, body } = req;
+      const { userId, email } = decoded;
+      const { productId, quantity = 1 } = query;
+      const { orderNumber, imp_uid, paid_amount } = body;
+
+      const [user] = await models.user.findByUserId({ userId });
+      if (!user) {
+        logger.warn('user not found');
+        res.status(404).send('존재하지 않는 유저');
+        return;
+      }
+
+      const [order] = await models.order.findOrderByOrderNumber({
+        orderNumber,
+      });
+      if (!order) {
+        logger.warn('order not found');
+        res.status(404).send('존재하지 않는 주문번호');
+        return;
+      }
+      if (order.imp_uid) {
+        logger.warn('이미 완료된 주문');
+        res.status(400).send('이미 완료된 주문');
+        return;
+      }
+
+      const [product] = await models.product.findProductById({ productId });
+      if (!product) {
+        logger.warn('user not found');
+        res.status(404).send('존재하지 않는 상품');
+        return;
+      }
+
+      if (product.price * quantity !== paid_amount) {
+        logger.warn('유효하지 않은 주문');
+        res.status(400).send('유효하지 않은 주문');
+        return;
+      }
+
+      await models.order.updateIamportOrder({
+        id: order.id,
+        imp_uid,
+      });
+
+      logger.info('success');
+      res.status(200).send({
+        orderNumber,
+        email,
+        userId,
+      });
+    } catch (error) {
+      console.log(error);
+      logger.error(error);
+      res.status(500).send('서버 에러');
+    }
+  },
+  failImaportPayment: async (req, res) => {
+    try {
+      const { decoded, query } = req;
+      const { userId } = decoded;
+      const { orderNumber } = query;
+      const [user] = await models.user.findByUserId({ userId });
+      if (!user) {
+        logger.warn('user not found');
+        res.status(404).send('존재하지 않는 유저');
+        return;
+      }
+      await models.order.deleteIamportOrder({ orderNumber });
+      logger.info('success');
+      res.status(200).send('주문 삭제 성공');
     } catch (error) {
       console.log(error);
       logger.error(error);

@@ -8,8 +8,9 @@ import { formatDistance } from 'date-fns';
 import './index.scss';
 
 const Home = () => {
-  const { isLoggedIn } = useSelector((state) => state.auth);
+  const { isLoggedIn, cid, user } = useSelector((state) => state.auth);
   const { posts, pagination, search } = useSelector((state) => state.board);
+  const { orderNumber } = useSelector((state) => state.order);
   const [productId, quantity] = [1, 1];
   const { page, pageSize, totalPages } = pagination;
   const dispatch = useDispatch();
@@ -31,6 +32,57 @@ const Home = () => {
     dispatch(actions.kakaoPaymentReady({ productId, quantity }));
   };
 
+  const onClickIamportReady = () => {
+    if (!isLoggedIn) {
+      alert('로그인 후에 결제가 가능합니다');
+      return;
+    }
+    dispatch(actions.imaportPaymentReady({ productId, quantity }));
+  };
+
+  const onClickIamport = () => {
+    if (!isLoggedIn) {
+      alert('로그인 후에 결제가 가능합니다');
+      return;
+    }
+    const IMP = window.IMP;
+    IMP.init(cid);
+
+    IMP.request_pay(
+      {
+        pg: 'html5_inicis',
+        pay_method: 'card',
+        merchant_uid: orderNumber,
+        name: '테스트',
+        amount: quantity * 1000,
+        buyer_email: user.email,
+        buyer_name: user.userId,
+        buyer_tel: '010-0000-0000',
+        buyer_addr: '서울특별시 중구',
+        buyer_postcode: '01181',
+      },
+      function (rsp) {
+        console.log(rsp);
+        if (rsp.success) {
+          // 성공 API 요청
+          const { paid_amount, imp_uid, merchant_uid } = rsp;
+          dispatch(
+            actions.imaportPaymentApproval({
+              productId,
+              quantity,
+              paid_amount,
+              imp_uid,
+              merchant_uid,
+            })
+          );
+        } else {
+          // 실패/취소 API 요청
+          dispatch(actions.imaportPaymentFailure({ orderNumber }));
+        }
+      }
+    );
+  };
+
   useEffect(() => {
     dispatch(actions.getPostList({ page, pageSize, search }));
   }, []);
@@ -40,6 +92,10 @@ const Home = () => {
       <Header />
       <Main>
         <div onClick={onClickButton}>카카오페이 결제 테스트</div>
+        <div onClick={onClickIamportReady}>아임포트 결제 준비</div>
+        {orderNumber && (
+          <div onClick={onClickIamport}>아임포트 결제 테스트</div>
+        )}
         <div className='main-wrapper'>
           <ul className='article-container'>
             {posts.map((post) => (

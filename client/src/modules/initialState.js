@@ -5,6 +5,7 @@ export const initialState = {
   auth: {
     accessToken: null,
     tokenType: null,
+    cid: null,
     isLoggedIn: false,
     foundData: null,
     user: {
@@ -29,5 +30,13 @@ export const initialState = {
   product: {
     id: 1,
     quantity: 1,
+  },
+  order: {
+    orderNumber: null,
+    result: {
+      email: null,
+      userId: null,
+      orderNumber: null,
+    },
   },
 };

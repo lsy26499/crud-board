@@ -25,6 +25,7 @@ module.exports = {
           message: '로그인 성공',
           accessToken,
           tokenType,
+          cid: process.env.IAMPORT_CID,
           user: { id, email, userId },
         });
         return;

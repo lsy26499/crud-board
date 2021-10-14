@@ -15,5 +15,20 @@ paymentRouter.post(
   verifyJwt,
   controllers.payment.approveKakaoPayment
 );
+paymentRouter.post(
+  '/payment/iamport/ready',
+  verifyJwt,
+  controllers.payment.readyToIamportPayment
+);
+paymentRouter.post(
+  '/payment/iamport/approve',
+  verifyJwt,
+  controllers.payment.approveImaportPayment
+);
+paymentRouter.post(
+  '/payment/iamport/failure',
+  verifyJwt,
+  controllers.payment.failImaportPayment
+);
 
 module.exports = paymentRouter;
