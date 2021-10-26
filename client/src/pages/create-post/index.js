@@ -2,26 +2,17 @@ import { useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Main, PostHeader } from '../../compoentns';
 import { actions } from '../../modules/store';
+import { useForm } from 'react-hook-form';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { checkImageSize, checkImageMimeType } from '../../utils';
 import './index.scss';
 
 const CreatePost = () => {
-  const [values, setValues] = useState({
-    title: '',
-    hashtag: '',
-    content: '',
-  });
+  const { register, handleSubmit } = useForm();
   const [images, setImages] = useState([]);
   const imageInputRef = useRef();
   const dispatch = useDispatch();
-
-  const onChangeValues = (e) => {
-    const name = e.target.name;
-    const value = e.target.value;
-    setValues({ ...values, [name]: value });
-  };
 
   const onChangeImage = async (e) => {
     const files = e.target.files;
@@ -39,7 +30,6 @@ const CreatePost = () => {
       let selectedFiles = [];
       for (let file of slicedFiles) {
         const isImage = await checkImageMimeType(file);
-        // const isImage = true;
         if (isImage) {
           const url = URL.createObjectURL(file);
           selectedFiles.push({ file, url });
@@ -59,15 +49,15 @@ const CreatePost = () => {
     setImages(newImages);
   };
 
-  const onSubmit = (e) => {
-    e.preventDefault();
-    if (values.title.trim() === '') {
+  const onSubmit = (data) => {
+    const { title, hashtag, content } = data;
+    if (title.trim() === '') {
       alert('제목을 입력해주세요');
       return;
     }
 
     const files = images.map((image) => image.file);
-    const tags = values.hashtag.split(',');
+    const tags = hashtag.split(',');
     const trimmedHashtag = tags.map((tag) => tag.trim());
     const isTagInvalid = Boolean(
       trimmedHashtag.filter((tag) => tag.length > 20 || tag === '').length
@@ -79,8 +69,8 @@ const CreatePost = () => {
 
     dispatch(
       actions.createPost({
-        title: values.title,
-        content: values.content,
+        title,
+        content,
         hashtag: trimmedHashtag,
         images: files,
       })
@@ -89,24 +79,20 @@ const CreatePost = () => {
 
   return (
     <div>
-      <PostHeader onSubmit={onSubmit} />
+      <PostHeader onSubmit={handleSubmit(onSubmit)} />
       <Main>
         <section className='create-post'>
-          <form className='form' onSubmit={onSubmit}>
+          <form className='form' onSubmit={handleSubmit(onSubmit)}>
             <div className='form-item'>
               <input
-                name='title'
                 placeholder='제목'
-                value={values.title}
-                onChange={onChangeValues}
+                {...register('title', { required: true, maxLength: 60 })}
               ></input>
             </div>
             <div className='form-item'>
               <input
-                name='hashtag'
                 placeholder='해시태그 (쉼표로 구분, 20자 이내)'
-                value={values.hashtag}
-                onChange={onChangeValues}
+                {...register('hashtag')}
               ></input>
             </div>
             <div className='form-item file'>
@@ -137,11 +123,7 @@ const CreatePost = () => {
               )}
             </div>
             <div className='form-item'>
-              <textarea
-                name='content'
-                value={values.content}
-                onChange={onChangeValues}
-              ></textarea>
+              <textarea {...register('content')}></textarea>
             </div>
           </form>
         </section>

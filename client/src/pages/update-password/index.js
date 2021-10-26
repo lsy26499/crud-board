@@ -1,38 +1,31 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { actions } from '../../modules/store';
-import { Header } from '../../compoentns';
+import { Header, Main } from '../../compoentns';
 import { useHistory } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { checkRequiredValueExist } from '../../utils';
 import './index.scss';
 
 const UpdatePassword = () => {
-  const [newPassword, setNewPassword] = useState('');
-  const [newPasswordCheck, setNewPasswordCheck] = useState('');
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+  } = useForm();
   const { foundData } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const history = useHistory();
 
-  const onSubmit = (e) => {
-    e.preventDefault();
-    if (newPassword === '' || newPasswordCheck === '') {
-      alert('패스워드를 입력해주세요');
-      return;
-    }
+  const requiredError = checkRequiredValueExist(errors);
+
+  const onSubmit = (data) => {
+    const { newPassword, newPasswordCheck } = data;
     if (newPassword !== newPasswordCheck) {
       alert('패스워드가 다릅니다');
       return;
     }
     dispatch(actions.updatePassword({ id: foundData.id, newPassword }));
-  };
-
-  const onChangeNewPassword = (e) => {
-    const value = e.target.value;
-    setNewPassword(value);
-  };
-
-  const onChangeNewPasswordCheck = (e) => {
-    const value = e.target.value;
-    setNewPasswordCheck(value);
   };
 
   useEffect(() => {
@@ -47,28 +40,31 @@ const UpdatePassword = () => {
   return (
     <div>
       <Header />
-      <main className='update-password'>
-        <h1 className='title'>비밀번호 재설정</h1>
-        <section className='form-section'>
-          <form className='update-password-form' onSubmit={onSubmit}>
-            <input
-              placeholder='새 비밀번호'
-              type='password'
-              name='newPassword'
-              value={newPassword}
-              onChange={onChangeNewPassword}
-            ></input>
-            <input
-              placeholder='새 비밀번호 확인'
-              type='password'
-              name='newPasswordCheck'
-              value={newPasswordCheck}
-              onChange={onChangeNewPasswordCheck}
-            ></input>
+      <Main>
+        <main className='update-password'>
+          <h1 className='title'>비밀번호 재설정</h1>
+          <form className='form' onSubmit={handleSubmit(onSubmit)}>
+            {requiredError && '모든 항목을 작성해주세요'}
+            <div className='form-item'>
+              <label htmlFor='newPassword'>새 비밀번호</label>
+              <input
+                placeholder='새 비밀번호'
+                type='password'
+                {...register('newPassword', { required: true })}
+              ></input>
+            </div>
+            <div className='form-item'>
+              <label htmlFor='newPasswordCheck'>새 비밀번호 확인</label>
+              <input
+                placeholder='새 비밀번호 확인'
+                type='password'
+                {...register('newPasswordCheck', { required: true })}
+              ></input>
+            </div>
             <button type='submit'>확인</button>
           </form>
-        </section>
-      </main>
+        </main>
+      </Main>
     </div>
   );
 };

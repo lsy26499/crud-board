@@ -1,46 +1,30 @@
-import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { actions } from '../../modules/store';
 import { Header, Main } from '../../compoentns';
-import { validateEmail } from '../../utils';
+import { useForm } from 'react-hook-form';
+import { validateEmail, checkRequiredValueExist } from '../../utils';
 import './index.scss';
 
 const SignUp = () => {
-  const [values, setValues] = useState({
-    userId: '',
-    email: '',
-    password: '',
-    secondPassword: '',
-  });
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+  } = useForm();
   const dispatch = useDispatch();
 
-  const onChangeInputValues = (e) => {
-    const value = e.target.value;
-    const name = e.target.name;
-    setValues({ ...values, [name]: value });
-  };
+  const [requiredError, emailError] = [
+    checkRequiredValueExist(errors),
+    errors?.email?.type === 'validate',
+  ];
 
-  const onSubmit = (e) => {
-    e.preventDefault();
-    const { userId, email, password, secondPassword } = values;
-    const isInputEmpty = Boolean(
-      Object.values(values).filter((item) => item.trim() === '').length
-    );
-
-    if (!validateEmail(email)) {
-      alert('잘못된 이메일 주소입니다');
-      return;
-    }
-
-    if (isInputEmpty) {
-      alert('모든 항목을 작성해주세요');
-      return;
-    }
-
+  const onSubmit = (data) => {
+    const { userId, email, password, secondPassword } = data;
     if (password !== secondPassword) {
       alert('비밀번호가 일치하지 않습니다');
       return;
     }
+
     dispatch(actions.signUp({ userId, email, password }));
   };
 
@@ -50,34 +34,32 @@ const SignUp = () => {
       <Main>
         <div className='signin-container'>
           <h1 className='title'>회원가입</h1>
-          <form className='form' onSubmit={onSubmit}>
+          <form className='form' onSubmit={handleSubmit(onSubmit)}>
+            {requiredError && '모든 항목을 작성해주세요'}
             <div className='form-item'>
               <label htmlFor='userId'>아이디</label>
               <input
                 placeholder='아이디'
-                name='userId'
-                value={values.userId}
-                onChange={onChangeInputValues}
+                {...register('userId', { required: true })}
               ></input>
             </div>
             <div className='form-item'>
               <label htmlFor='email'>이메일</label>
               <input
                 placeholder='이메일'
-                type='email'
-                name='email'
-                value={values.email}
-                onChange={onChangeInputValues}
+                {...register('email', {
+                  required: true,
+                  validate: validateEmail,
+                })}
               ></input>
             </div>
+            {emailError && '유효하지 않은 이메일'}
             <div className='form-item'>
               <label htmlFor='password'>비밀번호</label>
               <input
                 placeholder='비밀번호'
                 type='password'
-                name='password'
-                value={values.password}
-                onChange={onChangeInputValues}
+                {...register('password', { required: true })}
               ></input>
             </div>
             <div className='form-item'>
@@ -85,9 +67,7 @@ const SignUp = () => {
               <input
                 placeholder='비밀번호 확인'
                 type='password'
-                name='secondPassword'
-                value={values.secondPassword}
-                onChange={onChangeInputValues}
+                {...register('secondPassword', { required: true })}
               ></input>
             </div>
             <button type='submit'>회원가입</button>

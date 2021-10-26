@@ -1,47 +1,52 @@
-import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { actions } from '../../modules/store';
-import { Header } from '../../compoentns';
+import { Header, Main } from '../../compoentns';
+import { useForm } from 'react-hook-form';
+import { validateEmail, checkRequiredValueExist } from '../../utils';
 import './index.scss';
 
 const FindUserId = () => {
-  const [email, setEmail] = useState('');
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+  } = useForm();
   const { foundData } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
-  const onSubmit = (e) => {
-    e.preventDefault();
-    if (email === '') {
-      alert('이메일을 입력해주세요');
-      return;
-    }
-    dispatch(actions.findUserId({ email }));
-  };
+  const [requiredError, emailError] = [
+    checkRequiredValueExist(errors),
+    errors?.email?.type === 'validate',
+  ];
 
-  const onChangeEmail = (e) => {
-    const value = e.target.value;
-    setEmail(value);
+  const onSubmit = (data) => {
+    dispatch(actions.findUserId({ ...data }));
   };
 
   return (
     <div>
       <Header />
-      <main className='find-id'>
-        <h1 className='title'>아이디 찾기</h1>
-        <div className='form-section'>
-          <form className='find-id-form' onSubmit={onSubmit}>
-            <input
-              placeholder='이메일'
-              type='email'
-              name='email'
-              value={email}
-              onChange={onChangeEmail}
-            ></input>
+      <Main>
+        <main className='find-id'>
+          <h1 className='title'>아이디 찾기</h1>
+          <form className='form' onSubmit={handleSubmit(onSubmit)}>
+            {requiredError && '모든 항목을 작성해주세요'}
+            <div className='form-item'>
+              <label htmlFor='email'>이메일</label>
+              <input
+                placeholder='이메일'
+                {...register('email', {
+                  required: true,
+                  validate: validateEmail,
+                })}
+              ></input>
+            </div>
+            {emailError && '유효하지 않은 이메일'}
             <button type='submit'>확인</button>
           </form>
           {foundData && <div>{`아이디: ${foundData}`}</div>}
-        </div>
-      </main>
+        </main>
+      </Main>
     </div>
   );
 };

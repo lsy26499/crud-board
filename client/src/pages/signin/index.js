@@ -1,33 +1,24 @@
-import { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Header, Main } from '../../compoentns';
 import { actions } from '../../modules/store';
 import { useDispatch } from 'react-redux';
+import { useForm } from 'react-hook-form';
+import { checkRequiredValueExist } from '../../utils';
 import './index.scss';
 
 const SignIn = () => {
-  const [userId, setUserId] = useState('');
-  const [password, setPassword] = useState('');
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+  } = useForm();
   const dispatch = useDispatch();
   const history = useHistory();
 
-  const onSubmit = (e) => {
-    e.preventDefault();
-    if (userId === '' || password === '') {
-      alert('아이디와 비밀번호를 입력해주세요');
-      return;
-    }
-    dispatch(actions.signIn({ userId, password }));
-  };
+  const requiredError = checkRequiredValueExist(errors);
 
-  const onChangeUserId = (e) => {
-    const value = e.target.value;
-    setUserId(value);
-  };
-
-  const onChangePassword = (e) => {
-    const value = e.target.value;
-    setPassword(value);
+  const onSubmit = (data) => {
+    dispatch(actions.signIn({ ...data }));
   };
 
   return (
@@ -36,14 +27,13 @@ const SignIn = () => {
       <Main>
         <div className='login-container'>
           <h1 className='title'>로그인</h1>
-          <form className='form' onSubmit={onSubmit}>
+          <form className='form' onSubmit={handleSubmit(onSubmit)}>
+            {requiredError && '모든 항목을 작성해주세요'}
             <div className='form-item'>
               <label htmlFor='userId'>아이디</label>
               <input
                 placeholder='아이디'
-                name='userId'
-                value={userId}
-                onChange={onChangeUserId}
+                {...register('userId', { required: true })}
               ></input>
             </div>
             <div className='form-item'>
@@ -51,11 +41,10 @@ const SignIn = () => {
               <input
                 placeholder='비밀번호'
                 type='password'
-                name='password'
-                value={password}
-                onChange={onChangePassword}
+                {...register('password', { required: true })}
               ></input>
             </div>
+            {}
             <button type='submit'>로그인</button>
           </form>
           <nav>

@@ -5,17 +5,22 @@
   justify-content: center;
   margin-top: 60px;
   .title {
-    margin-bottom: 40px;
+    font-size: 30px;
+    margin-bottom: 30px;
   }
-  .form-section {
-    width: 1120px;
-    .find-id-form {
-      display: flex;
-      flex-direction: row;
-      justify-content: center;
-      > input {
+  .form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    .form-item {
+      margin-bottom: 8px;
+      label {
         margin-right: 10px;
       }
+    }
+    button {
+      margin-bottom: 20px;
     }
   }
 }

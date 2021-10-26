@@ -7,6 +7,19 @@ export const validateEmail = (email) => {
   return false;
 };
 
+export const checkValueEmpty = (values) => {
+  return Boolean(
+    Object.keys(values).filter((value) => !value || value.trim() === '').length
+  );
+};
+
+export const checkRequiredValueExist = (errors) => {
+  const inputNames = Object.keys(errors);
+  return Boolean(
+    inputNames.filter((key) => errors[key]?.type === 'required').length
+  );
+};
+
 export const checkImageMimeType = async (file) => {
   const type = await FileType.fromBlob(file);
   const mimeType = type.mime.split('/')[0];

@@ -84,7 +84,7 @@ module.exports = {
       const [userId] = await models.user.findUserId({ email });
       if (userId) {
         logger.info('success');
-        res.status(200).send({ foundData: userId.userId });
+        res.status(200).send({ foundData: userId.user_id });
         return;
       } else {
         logger.info('user not found');

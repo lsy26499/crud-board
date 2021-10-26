@@ -87,7 +87,7 @@ module.exports = {
     return new Promise((res, rej) => {
       db.then((conn) => {
         conn
-          .query(`DELETE FROM board_hashtag WHERE (hashtagId) IN (${query})`)
+          .query(`DELETE FROM board_hashtag WHERE (hashtag_id) IN (${query})`)
           .then((rows) => {
             res(rows);
           })

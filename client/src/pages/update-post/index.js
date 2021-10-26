@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Main, PostHeader } from '../../compoentns';
 import { actions } from '../../modules/store';
+import { useForm } from 'react-hook-form';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { checkImageSize, checkImageMimeType } from '../../utils';
@@ -10,22 +11,12 @@ import './index.scss';
 const UpdatePost = () => {
   const { currentPost } = useSelector((state) => state.board);
   const { id, title, content, hashtag, images: postImages } = currentPost;
+  const { register, handleSubmit } = useForm();
   const imageUrls = postImages.map((image) => image.url);
 
-  const [values, setValues] = useState({
-    title,
-    content,
-    hashtag: hashtag.map((tag) => tag.name).join(','),
-  });
   const [images, setImages] = useState([]);
   const imageInputRef = useRef();
   const dispatch = useDispatch();
-
-  const onChangeValues = (e) => {
-    const name = e.target.name;
-    const value = e.target.value;
-    setValues({ ...values, [name]: value });
-  };
 
   const onChangeImage = async (e) => {
     const files = e.target.files;
@@ -61,14 +52,14 @@ const UpdatePost = () => {
     setImages(newImages);
   };
 
-  const onSubmit = (e) => {
-    e.preventDefault();
-    if (values.title.trim() === '') {
+  const onSubmit = (data) => {
+    const { title, hashtag, content } = data;
+    if (title.trim() === '') {
       alert('제목을 입력해주세요');
       return;
     }
     const files = images.map((image) => image.file || image.url);
-    const tags = values.hashtag.split(',');
+    const tags = hashtag.split(',');
     const trimmedHashtag = tags.map((tag) => tag.trim());
     const isTagInvalid = Boolean(
       trimmedHashtag.filter((tag) => tag.length > 20 || tag === '').length
@@ -81,8 +72,8 @@ const UpdatePost = () => {
     dispatch(
       actions.updatePost({
         id,
-        title: values.title,
-        content: values.content,
+        title,
+        content,
         hashtag: trimmedHashtag,
         images: files,
       })
@@ -101,24 +92,12 @@ const UpdatePost = () => {
     });
   };
 
-  const getFileUrlFromBlob = (item) => {
-    const { blob, url } = item;
-    const fileName =
-      postImages.find((image) => image.url === url).name ||
-      `${new Date().getTime()}.jpg`;
-    const ext = fileName.split('.')[1];
-    const metadata = { type: `image/${ext}` };
-    return new File([blob], fileName, metadata);
-  };
-
   useEffect(() => {
     const promises = imageUrls.map((url) => getImageBlobUrl(url));
     Promise.all(promises)
       .then((data) => {
         const files = data.map((item) => {
-          const file = getFileUrlFromBlob(item);
           return {
-            // file: file,
             url: item.url,
           };
         });
@@ -129,21 +108,19 @@ const UpdatePost = () => {
 
   return (
     <div>
-      <PostHeader onSubmit={onSubmit} />
+      <PostHeader onSubmit={handleSubmit(onSubmit)} />
       <Main>
         <section className='update-post'>
-          <form className='form' onSubmit={onSubmit}>
+          <form className='form' onSubmit={handleSubmit(onSubmit)}>
             <input
-              name='title'
-              value={values.title}
               placeholder='제목'
-              onChange={onChangeValues}
+              defaultValue={title}
+              {...register('title', { required: true, maxLength: 60 })}
             ></input>
             <input
-              name='hashtag'
               placeholder='해시태그 (쉼표로 구분, 20자 이내)'
-              value={values.hashtag}
-              onChange={onChangeValues}
+              defaultValue={hashtag.map((tag) => tag.name).join(',')}
+              {...register('hashtag')}
             ></input>
             <div className='form-item file'>
               <input
@@ -173,9 +150,8 @@ const UpdatePost = () => {
               )}
             </div>
             <textarea
-              name='content'
-              value={values.content}
-              onChange={onChangeValues}
+              defaultValue={content}
+              {...register('content')}
             ></textarea>
           </form>
         </section>

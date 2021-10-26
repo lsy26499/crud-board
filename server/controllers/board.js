@@ -164,6 +164,8 @@ module.exports = {
         const found = fileteredHashtag.find((item) => item === tag.name);
         return found ? true : false;
       });
+      const [foundPost] = await models.board.findPostById({ id });
+
       if (addedHashtags.length > 0) {
         const hashtagIds = addedHashtags.map((tag) => tag.id);
         await models.hashtag.insertBoardAndHashtag({
@@ -172,7 +174,6 @@ module.exports = {
         });
       }
 
-      const [foundPost] = await models.board.findPostById({ id });
       if (foundPost.user_id !== user.id) {
         logger.warn('forbidden');
         res.status(403).send('유효하지 않은 요청');
